@@ -115,15 +115,11 @@ public abstract class CameraModeBase {
     }
 
     public abstract void cameraVideoClick();
-
-
-    public CameraVideoResultCallBack mCameraVideoResultCallBack;
-    public void setCameraPictureResultCallBack(CameraVideoResultCallBack cameraVideoResultCallBack) {
+    public CameraVideoRecordCallBack mCameraVideoResultCallBack;
+    public void setCameraVideoResultCallBack(CameraVideoRecordCallBack cameraVideoResultCallBack) {
         mCameraVideoResultCallBack = cameraVideoResultCallBack;
     }
-    public interface CameraVideoResultCallBack{
-        void callVideoBack(Observable<String> result);
-    }
+
     //Camera录像数据-----------------------------------------
 
 }

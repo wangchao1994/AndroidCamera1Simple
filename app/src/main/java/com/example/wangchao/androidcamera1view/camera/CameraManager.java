@@ -9,6 +9,7 @@ import com.example.wangchao.androidcamera1view.camera.mode.PhotoMode;
 import com.example.wangchao.androidcamera1view.camera.mode.VideoMode;
 
 public class CameraManager {
+
     public static final String TAG = CameraManager.class.getSimpleName();
     private ICameraImpl mICameraImpl;
     private CameraModeBase mCurrentMode;
@@ -26,10 +27,17 @@ public class CameraManager {
     }
 
     /**
-     * 设置拍照回掉
+     * 设置拍照回调
      */
     public void setCameraResultCallBack(CameraModeBase.CameraPictureResultCallBack cameraPictureResultCallBack) {
         mPhotoMode.setCameraPictureResultCallBack(cameraPictureResultCallBack);
+
+    }
+    /**
+     * 设置录像回调
+     */
+    public void setCameraVideoCallBack(CameraModeBase.CameraVideoRecordCallBack cameraVideoCallBack){
+        mVideoMode.setCameraVideoResultCallBack(cameraVideoCallBack);
     }
 
     /**
@@ -116,7 +124,7 @@ public class CameraManager {
     /**
      * 开始录像
      */
-    public void startRecord(){
+    public void startVideoRecord(){
         mCurrentMode.cameraVideoClick();
     }
     /**
@@ -125,5 +133,6 @@ public class CameraManager {
     public  void pauseVideoRecord(){
         ((VideoMode) mVideoMode).pauseRecordingVideo();
     }
+
 
 }

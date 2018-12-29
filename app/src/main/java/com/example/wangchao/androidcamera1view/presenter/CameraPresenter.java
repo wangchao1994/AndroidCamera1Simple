@@ -10,7 +10,10 @@ import com.example.wangchao.androidcamera1view.camera.controller.CameraContract;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
 import com.example.wangchao.androidcamera1view.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.utils.permission.PermissionsManager;
+import com.example.wangchao.androidcamera1view.utils.time.TimingUtils;
 import com.example.wangchao.androidcamera1view.utils.toast.ToastUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscription;
@@ -19,14 +22,15 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.CameraPictureResultCallBack {
+public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.CameraPictureResultCallBack,CameraModeBase.CameraVideoRecordCallBack{
 
     private CameraContract.CameraViewCall mCameraView;
     private ICameraImpl mICameraImp;
     private CameraManager mCameraManager;
     private CompositeSubscription compositeSubscription;
     private int currentCameraMode;//默认拍照模式
-
+    private Subscription cycleTimeSubscription;
+    private long time = 0;
 
     public CameraPresenter(CameraContract.CameraViewCall cameraView, ICameraImpl iCameraImp){
         mICameraImp = iCameraImp;
@@ -34,6 +38,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
         compositeSubscription = new CompositeSubscription();
         mCameraManager = mICameraImp.getCameraManager();
         mCameraManager.setCameraResultCallBack(this);
+        mCameraManager.setCameraVideoCallBack(this);
         currentCameraMode = CameraManager.MODE_CAMERA;
     }
     @Override
@@ -90,14 +95,46 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void startRecord() {
+    public void startVideoRecord() {
         if (mCameraManager != null){
-            mCameraManager.startRecord();
+            mCameraManager.startVideoRecord();
         }
     }
 
     @Override
+    public void startRecord() {
+        mCameraView.switchRecordMode(CameraContract.CameraViewCall.MODE_RECORD_START);
+        cycleTimeSubscription = Observable.interval(1, TimeUnit.SECONDS, Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.computation())
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        time += 1000;
+                        String time_show = TimingUtils.getDate(time);
+                        Log.d("camera_log","startRecord---------="+time_show);
+                        mCameraView.setTimeShow(time_show);
+                    }
+                });
+        compositeSubscription.add(cycleTimeSubscription);
+
+    }
+
+    @Override
+    public void finishRecord() {
+        mCameraView.switchRecordMode(CameraContract.CameraViewCall.MODE_RECORD_FINISH);
+        if (cycleTimeSubscription != null) {
+            compositeSubscription.remove(cycleTimeSubscription);
+        }
+        time = 0;
+    }
+
+    @Override
     public void stopRecord() {
+        if (cycleTimeSubscription != null) {
+            compositeSubscription.remove(cycleTimeSubscription);
+        }
+        mCameraView.switchRecordMode(CameraContract.CameraViewCall.MODE_RECORD_STOP);
         if (mCameraManager != null){
             mCameraManager.pauseVideoRecord();
         }
@@ -106,7 +143,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     @Override
     public void restartRecord() {
         if (mCameraManager != null){
-            mCameraManager.startRecord();
+            mCameraManager.startVideoRecord();
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.wangchao.androidcamera1view.camera.controller;
 import com.example.cameraview.CameraView;
 
 public interface CameraContract {
+
     interface Presenter {
         void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
         void onResume();
@@ -12,10 +13,12 @@ public interface CameraContract {
         void setFlashAuto(int autoFlash);
         void setPictureCallBack();
         void switchCameraMode(int currentMode);
-        void startRecord();
+        void startVideoRecord();
         void stopRecord();
         void restartRecord();
+
     }
+
     interface CameraViewCall<T extends Presenter> {
         CameraView getCameraView();
         /**
