@@ -49,8 +49,6 @@ public abstract class CameraViewImpl {
 
     public abstract int getFacing();
 
-    public abstract Camera getCurrentCamera();
-
     public abstract Set<AspectRatio> getSupportedAspectRatios();
 
     /**
@@ -81,5 +79,10 @@ public abstract class CameraViewImpl {
         void onPictureTaken(byte[] data);
 
     }
+    public abstract Camera getCurrentCamera();
+
+    public abstract void startRecording();
+    public abstract void stopRecording();
+    public abstract boolean isRecording();
 
 }

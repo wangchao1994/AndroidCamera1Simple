@@ -245,6 +245,20 @@ public class Camera2 extends CameraViewImpl {
     public Camera getCurrentCamera() {
         return null;
     }
+    /*camera interface add start ---------------------------*/
+    @Override
+    public void startRecording() {
+    }
+
+    @Override
+    public void stopRecording() {
+
+    }
+    @Override
+    public boolean isRecording() {
+        return false;
+    }
+    /*camera interface add end ---------------------------*/
 
     @Override
     public Set<AspectRatio> getSupportedAspectRatios() {

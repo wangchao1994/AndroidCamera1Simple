@@ -1,7 +1,8 @@
 package com.example.wangchao.androidcamera1view.utils.rxjava;
 
 import android.content.Context;
-import com.example.wangchao.androidcamera1view.utils.file.FileUtils;
+
+import com.example.cameraview.utils.file.FileUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

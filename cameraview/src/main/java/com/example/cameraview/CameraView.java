@@ -31,6 +31,8 @@ import android.support.v4.os.ParcelableCompat;
 import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
 
@@ -111,13 +113,16 @@ public class CameraView extends FrameLayout {
         // Internal setup
         preview = createPreviewImpl(context);
         mCallbacks = new CallbackBridge();
-        if (Build.VERSION.SDK_INT < 21) {
+        //camera1/camera2自适应 change
+        /*if (Build.VERSION.SDK_INT < 21) {
             mImpl = new Camera1(mCallbacks, preview);
         } else if (Build.VERSION.SDK_INT < 23) {
             mImpl = new Camera2(mCallbacks, preview, context);
         } else {
+            Log.d("sdk_int","other------------------------------------");
             mImpl = new Camera2Api23(mCallbacks, preview, context);
-        }
+        }*/
+        mImpl = new Camera1(mCallbacks, preview);
         // Attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,
                 R.style.Widget_CameraView);
@@ -144,11 +149,13 @@ public class CameraView extends FrameLayout {
     @NonNull
     private PreviewImpl createPreviewImpl(Context context) {
         PreviewImpl preview;
-        if (Build.VERSION.SDK_INT < 14) {
+        //camera1/camera2自适应 change
+        /*if (Build.VERSION.SDK_INT < 14) {
             preview = new SurfaceViewPreview(context, this);
         } else {
             preview = new TextureViewPreview(context, this);
-        }
+        }*/
+        preview = new SurfaceViewPreview(context, this);
         return preview;
     }
 
@@ -345,17 +352,42 @@ public class CameraView extends FrameLayout {
     }
 //add wangchao-----------------
     public Camera getCurrentCamera() {
-        if (mImpl.getCurrentCamera() != null){
+        if (mImpl != null){
             return mImpl.getCurrentCamera();
         }
         return null;
     }
-
-    public SurfaceHolder getSurfaceHolder() {
+    public Surface getSurface() {
         if (preview != null){
-            return preview.getSurfaceHolder();
+            return preview.getSurface();
         }
         return null;
+    }
+
+    public boolean isRecording() {
+        if (mImpl != null){
+            return mImpl.isRecording();
+        }
+        return false;
+    }
+
+    /**
+     * 开始录像
+     */
+    public void startRecording(){
+        if (mImpl != null){
+            Log.d("prepareVideoRecorder","startRecording--------------------------------------");
+            mImpl.startRecording();
+        }
+    }
+    /**
+     * 停止录像
+     */
+    public void stopRecording(){
+        if (mImpl != null){
+            Log.d("prepareVideoRecorder","stopRecording--------------------------------------");
+            mImpl.stopRecording();
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.example.wangchao.androidcamera1view.utils;
+package com.example.cameraview.utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -8,14 +8,14 @@ public interface CameraContract {
         void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
         void onResume();
         void onPause();
-        void takePicture();
+        void takePictureOrVideo();
         void switchCameraId(int direction);
         void setFlashAuto(int autoFlash);
         void setPictureCallBack();
         void switchCameraMode(int currentMode);
-        void startVideoRecord();
         void stopRecord();
         void restartRecord();
+        int getCameraMode();
 
     }
 

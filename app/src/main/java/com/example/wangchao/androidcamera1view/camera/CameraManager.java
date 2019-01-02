@@ -29,8 +29,8 @@ public class CameraManager {
     /**
      * 设置拍照回调
      */
-    public void setCameraResultCallBack(CameraModeBase.CameraPictureResultCallBack cameraPictureResultCallBack) {
-        mPhotoMode.setCameraPictureResultCallBack(cameraPictureResultCallBack);
+    public void setCameraResultCallBack(CameraModeBase.CameraPictureOrVideoResultCallBack cameraPictureOrVideoResultCallBack) {
+        mPhotoMode.setCameraPictureResultCallBack(cameraPictureOrVideoResultCallBack);
 
     }
     /**
@@ -79,10 +79,10 @@ public class CameraManager {
         mCurrentMode.switchCameraId(direction);
     }
     /**
-     *拍照
+     *拍照/录像
      */
-    public void shutterPicture(){
-        mCurrentMode.cameraPhotoClick();
+    public void shutterPictureOrVideo(){
+        mCurrentMode.cameraPhotoOrVideoClick();
     }
     /**
      *拍照
@@ -119,13 +119,6 @@ public class CameraManager {
                 break;
         }
         mCurrentMode.startOperate();
-    }
-
-    /**
-     * 开始录像
-     */
-    public void startVideoRecord(){
-        mCurrentMode.cameraVideoClick();
     }
     /**
      * 暂停录像

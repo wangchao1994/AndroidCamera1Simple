@@ -1,30 +1,26 @@
 package com.example.wangchao.androidcamera1view;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cameraview.CameraView;
+import com.example.cameraview.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
 import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraContract;
 import com.example.wangchao.androidcamera1view.presenter.CameraPresenter;
-import com.example.wangchao.androidcamera1view.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.utils.glide.GlideLoader;
-import com.google.android.cameraview.Constants;
+
 /**
  * Main CameraView
  */
@@ -55,8 +51,8 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     };
 
     private final int[] FLASH_ICONS = {
-            R.drawable.ic_flash_auto,
             R.drawable.ic_flash_off,
+            R.drawable.ic_flash_auto,
             R.drawable.ic_flash_on,
     };
 
@@ -179,14 +175,20 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         switch (v.getId()){
             case R.id.fb_take_picture:
                 if (mCameraPresenter!=null){
-                    mCameraPresenter.takePicture();
-                    mCameraPresenter.switchCameraMode(CameraManager.MODE_CAMERA);
+                    if (mCameraPresenter.getCameraMode() == CameraManager.MODE_CAMERA){
+                        mCameraPresenter.takePictureOrVideo();
+                    }else{
+                        mCameraPresenter.switchCameraMode(CameraManager.MODE_CAMERA);
+                    }
                 }
                 break;
             case R.id.fb_video_recording:
                 if (mCameraPresenter!=null){
-                    mCameraPresenter.switchCameraMode(CameraManager.MODE_VIDEO_RECORD);
-                    mCameraPresenter.startRecord();
+                    if (mCameraPresenter.getCameraMode() == CameraManager.MODE_VIDEO_RECORD){
+                        mCameraPresenter.takePictureOrVideo();
+                    }else{
+                        mCameraPresenter.switchCameraMode(CameraManager.MODE_VIDEO_RECORD);
+                    }
                 }
                 break;
             case R.id.iv_flash_switch:

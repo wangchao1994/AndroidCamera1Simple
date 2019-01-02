@@ -90,7 +90,7 @@ public class PhotoMode extends CameraModeBase {
     }
 
     @Override
-    public void cameraPhotoClick() {
+    public void cameraPhotoOrVideoClick() {
         CameraView cameraView = getCameraView();
         if (cameraView!=null){
             cameraView.takePicture();
@@ -107,14 +107,11 @@ public class PhotoMode extends CameraModeBase {
 
     @Override
     protected void writePictureData(byte[] data) {
-        if (mCameraPitureResultCallBack != null){
+        if (mCameraPitureOrVideoResultCallBack != null){
             //数据写入返回路径
-            mCameraPitureResultCallBack.callPictureBack(ObservableBuilder.createWriteCaptureData(BaseApplication.getInstance(), data));
+            mCameraPitureOrVideoResultCallBack.callResultBack(ObservableBuilder.createWriteCaptureData(BaseApplication.getInstance(), data));
         }
     }
 
-    @Override
-    public void cameraVideoClick() {
-    }
 
 }

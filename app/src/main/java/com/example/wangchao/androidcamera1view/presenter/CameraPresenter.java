@@ -3,12 +3,12 @@ package com.example.wangchao.androidcamera1view.presenter;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.example.cameraview.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
 import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraContract;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
-import com.example.wangchao.androidcamera1view.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.utils.permission.PermissionsManager;
 import com.example.wangchao.androidcamera1view.utils.time.TimingUtils;
 import com.example.wangchao.androidcamera1view.utils.toast.ToastUtils;
@@ -22,7 +22,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.CameraPictureResultCallBack,CameraModeBase.CameraVideoRecordCallBack{
+public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.CameraPictureOrVideoResultCallBack,CameraModeBase.CameraVideoRecordCallBack{
 
     private CameraContract.CameraViewCall mCameraView;
     private ICameraImpl mICameraImp;
@@ -56,9 +56,9 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void takePicture() {
+    public void takePictureOrVideo() {
         if (mCameraManager != null){
-            mCameraManager.shutterPicture();
+            mCameraManager.shutterPictureOrVideo();
         }
     }
 
@@ -91,13 +91,6 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
         currentCameraMode = currentMode;
         if (mCameraManager != null){
             mCameraManager.switchCamerMode(currentCameraMode);
-        }
-    }
-
-    @Override
-    public void startVideoRecord() {
-        if (mCameraManager != null){
-            mCameraManager.startVideoRecord();
         }
     }
 
@@ -143,8 +136,13 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     @Override
     public void restartRecord() {
         if (mCameraManager != null){
-            mCameraManager.startVideoRecord();
+            mCameraManager.shutterPictureOrVideo();
         }
+    }
+
+    @Override
+    public int getCameraMode() {
+        return currentCameraMode;
     }
 
     @Override
@@ -177,7 +175,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void callPictureBack(Observable<String> result) {
+    public void callResultBack(Observable<String> result) {
         if (result != null) {
             Subscription subscription = result.subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())

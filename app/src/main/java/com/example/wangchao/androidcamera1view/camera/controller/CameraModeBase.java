@@ -58,12 +58,12 @@ public abstract class CameraModeBase {
      */
     public abstract Set<AspectRatio> getSupportedAspectRatios();
     public abstract AspectRatio getCurrentAspectRatio();
-
-    //Camera图片数据-----------------------------------------
     /**
-     *点击拍照事件
+     *点击拍照Or录像事件
      */
-    public abstract void cameraPhotoClick();
+    public abstract void cameraPhotoOrVideoClick();
+    //Camera图片数据-----------------------------------------
+
     public abstract void addCameraPictureCallBack();
     /**
      * 写入图片数据
@@ -88,18 +88,24 @@ public abstract class CameraModeBase {
         }
     };
 
-    public CameraPictureResultCallBack mCameraPitureResultCallBack;
-    public void setCameraPictureResultCallBack(CameraPictureResultCallBack cameraPictureResultCallBack) {
-        mCameraPitureResultCallBack = cameraPictureResultCallBack;
-    }
-    public interface CameraPictureResultCallBack{
-        void callPictureBack(Observable<String> result);
+    public CameraPictureOrVideoResultCallBack mCameraPitureOrVideoResultCallBack;
+    public void setCameraPictureResultCallBack(CameraPictureOrVideoResultCallBack cameraPictureOrVideoResultCallBack) {
+        mCameraPitureOrVideoResultCallBack = cameraPictureOrVideoResultCallBack;
     }
     //Camera图片数据-----------------------------------------
 
-
+    //录像拍照公共接口
+    public interface CameraPictureOrVideoResultCallBack{
+        void callResultBack(Observable<String> result);
+    }
 
     //Camera录像数据-----------------------------------------
+
+    public CameraVideoRecordCallBack mCameraVideoResultCallBack;
+    public void setCameraVideoResultCallBack(CameraVideoRecordCallBack cameraVideoResultCallBack) {
+        mCameraVideoResultCallBack = cameraVideoResultCallBack;
+    }
+
     /**
      *录像事件
      */
@@ -114,11 +120,7 @@ public abstract class CameraModeBase {
         void finishRecord();
     }
 
-    public abstract void cameraVideoClick();
-    public CameraVideoRecordCallBack mCameraVideoResultCallBack;
-    public void setCameraVideoResultCallBack(CameraVideoRecordCallBack cameraVideoResultCallBack) {
-        mCameraVideoResultCallBack = cameraVideoResultCallBack;
-    }
+
 
     //Camera录像数据-----------------------------------------
 

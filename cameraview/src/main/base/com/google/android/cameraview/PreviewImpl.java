@@ -55,9 +55,7 @@ public abstract class PreviewImpl {
         mCallback.onSurfaceChanged();
     }
 
-    public SurfaceHolder getSurfaceHolder() {
-        return null;
-    }
+    public abstract SurfaceHolder getSurfaceHolder();
 
     public SurfaceTexture getSurfaceTexture() {
         return null;

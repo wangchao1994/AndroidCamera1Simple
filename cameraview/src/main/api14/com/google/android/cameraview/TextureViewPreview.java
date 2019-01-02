@@ -20,7 +20,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.util.Log;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +103,11 @@ public class TextureViewPreview extends PreviewImpl {
     @Override
     public boolean isReady() {
         return mTextureView.getSurfaceTexture() != null;
+    }
+
+    @Override
+    public SurfaceHolder getSurfaceHolder() {
+        return null;
     }
 
     /**

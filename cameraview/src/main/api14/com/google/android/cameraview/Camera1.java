@@ -19,17 +19,21 @@ package com.google.android.cameraview;
 import android.annotation.SuppressLint;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.example.cameraview.utils.CameraUtils;
+import com.example.cameraview.utils.file.FileUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 
 @SuppressWarnings("deprecation")
 public class Camera1 extends CameraViewImpl {
@@ -71,6 +75,16 @@ public class Camera1 extends CameraViewImpl {
     private int mFlash;
 
     private int mDisplayOrientation;
+    private MediaRecorder mMediaRecorder;
+    private Size size;
+    private String outputMediaFileType;
+    private Uri outputMediaFileUri;
+    private int mOptVideoWidth;
+    private int mOptVideoHeight;
+    private String mNextVideoAbsolutePath;
+    private final SizeMap mVideoSizes = new SizeMap();
+    private Camera.Size optimalVideoSize;
+
 
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -285,6 +299,8 @@ public class Camera1 extends CameraViewImpl {
         }
     }
 
+
+
     /**
      * This rewrites {@link #mCameraId} and {@link #mCameraInfo}.
      */
@@ -315,6 +331,11 @@ public class Camera1 extends CameraViewImpl {
         for (Camera.Size size : mCameraParameters.getSupportedPictureSizes()) {
             mPictureSizes.add(new Size(size.width, size.height));
         }
+        //// Supported picture sizes;
+        mVideoSizes.clear();
+        for (Camera.Size size : mCameraParameters.getSupportedVideoSizes()) {
+            mVideoSizes.add(new Size(size.width, size.height));
+        }
         // AspectRatio
         if (mAspectRatio == null) {
             mAspectRatio = Constants.DEFAULT_ASPECT_RATIO;
@@ -341,8 +362,9 @@ public class Camera1 extends CameraViewImpl {
             mAspectRatio = chooseAspectRatio();
             sizes = mPreviewSizes.sizes(mAspectRatio);
         }
-        Size size = chooseOptimalSize(sizes);
-
+        size = chooseOptimalSize(sizes);
+        //add adjustCameraParameters
+        optimalVideoSize = CameraUtils.getOptimalVideoSize(mCameraParameters.getSupportedPictureSizes(), mCameraParameters.getSupportedPreviewSizes(), size.getWidth(), size.getHeight());
         // Always re-apply camera parameters
         // Largest picture size in this ratio
         final Size pictureSize = mPictureSizes.sizes(mAspectRatio).last();
@@ -492,4 +514,74 @@ public class Camera1 extends CameraViewImpl {
         }
     }
 
+//录像 start------------------------------------------------------
+    @Override
+    public void startRecording() {
+        if (prepareVideoRecorder()) {
+            mMediaRecorder.start();
+        } else {
+            releaseMediaRecorder();
+        }
+    }
+
+    @Override
+    public void stopRecording() {
+        if (mMediaRecorder != null) {
+            Log.d("prepareVideoRecorder","stopRecording--------mMediaRecorder.stop();-------");
+            mMediaRecorder.stop();
+        }
+        releaseMediaRecorder();
+    }
+
+    @Override
+    public boolean isRecording() {
+        return mMediaRecorder != null;
+    }
+
+    /**
+     * 参数设置
+     * @return
+     */
+    private boolean prepareVideoRecorder() {
+
+        if (mCamera == null) return false;
+        mMediaRecorder = new MediaRecorder();
+
+        mCamera.unlock();
+        mMediaRecorder.setCamera(mCamera);
+
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        Log.d("prepareVideoRecorder","mOptVideoWidth="+optimalVideoSize.width+"   mOptVideoHeight="+optimalVideoSize.height);
+        mMediaRecorder.setVideoSize(optimalVideoSize.width, optimalVideoSize.height);
+        mNextVideoAbsolutePath = FileUtils.createVideoDiskFile(getView().getContext(), FileUtils.createVideoFileName()).getAbsolutePath();
+        Log.d("prepareVideoRecorder","mNextVideoAbsolutePath="+mNextVideoAbsolutePath);
+        mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
+        mMediaRecorder.setPreviewDisplay(mPreview.getSurface());
+        mMediaRecorder.setOrientationHint(90);
+        try {
+            mMediaRecorder.prepare();
+        } catch (IllegalStateException e) {
+            Log.d("prepareVideoRecorder", "IllegalStateException preparing MediaRecorder: " + e.getMessage());
+            releaseMediaRecorder();
+            return false;
+        } catch (IOException e) {
+            Log.d("prepareVideoRecorder", "IOException preparing MediaRecorder: " + e.getMessage());
+            releaseMediaRecorder();
+            return false;
+        }
+        Log.d("prepareVideoRecorder","size.getWidth()-----------------============================0987654321");
+        return true;
+    }
+    private void releaseMediaRecorder() {
+        if (mMediaRecorder != null) {
+            mMediaRecorder.reset();
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+            mCamera.lock();
+        }
+    }
+//录像 end------------------------------------------------------
 }
