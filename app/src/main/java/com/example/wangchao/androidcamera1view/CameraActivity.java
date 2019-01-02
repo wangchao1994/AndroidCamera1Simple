@@ -2,15 +2,16 @@ package com.example.wangchao.androidcamera1view;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 
 import com.example.cameraview.CameraView;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseActivity;
 import com.example.wangchao.androidcamera1view.camera.CameraManager;
+import com.example.wangchao.androidcamera1view.camera.event.GlobalAction;
+import com.example.wangchao.androidcamera1view.camera.event.GlobalHandler;
 import com.example.wangchao.androidcamera1view.presenter.CameraPresenter;
 import com.example.wangchao.androidcamera1view.utils.thread.WorkThreadManager;
 
@@ -92,5 +93,25 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mCameraPresenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
+    @Override
+    public GlobalHandler getGlobalHandler() {
+        if (mGlobalHandler != null){
+            return mGlobalHandler;
+        }
+        return null;
+    }
+    @Override
+    public void handleMsg(Message msg) {
+        switch (msg.what){
+            case GlobalAction.SAVE_VIDEO_DIALOG_SHOW:
+                Log.d("msg","-----------------");
+                mCameraManager.showProgress(getResources().getString(R.string.save_video));
+                break;
+            case GlobalAction.SAVE_VIDEO_DIALOG_DISMISS:
+                Log.d("msg","-----------------");
+                if(mCameraManager.isShowingProgress()){
+                }
+                break;
+        }
+    }
 }

@@ -25,13 +25,12 @@ public class CameraManager {
         //默认为拍照模式
         mCurrentMode = mPhotoMode;
     }
-
     /**
      * 设置拍照回调
      */
     public void setCameraResultCallBack(CameraModeBase.CameraPictureOrVideoResultCallBack cameraPictureOrVideoResultCallBack) {
-        mPhotoMode.setCameraPictureResultCallBack(cameraPictureOrVideoResultCallBack);
-
+        mPhotoMode.CameraPictureOrVideoResultCallBack(cameraPictureOrVideoResultCallBack);
+        mVideoMode.CameraPictureOrVideoResultCallBack(cameraPictureOrVideoResultCallBack);
     }
     /**
      * 设置录像回调
@@ -126,6 +125,16 @@ public class CameraManager {
     public  void pauseVideoRecord(){
         ((VideoMode) mVideoMode).pauseRecordingVideo();
     }
-
-
+    /**
+     * save Video Dialog
+     */
+    public void showProgress(String msg) {
+        ((VideoMode) mVideoMode).getRotateProgress().showProgress(msg);
+    }
+    public void dismissProgress() {
+        ((VideoMode) mVideoMode).getRotateProgress().hide();
+    }
+    public boolean isShowingProgress() {
+        return ((VideoMode) mVideoMode).getRotateProgress().isShowing();
+    }
 }

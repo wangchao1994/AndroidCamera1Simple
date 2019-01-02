@@ -87,13 +87,12 @@ public abstract class CameraModeBase {
             writePictureData(data);
         }
     };
-
-    public CameraPictureOrVideoResultCallBack mCameraPitureOrVideoResultCallBack;
-    public void setCameraPictureResultCallBack(CameraPictureOrVideoResultCallBack cameraPictureOrVideoResultCallBack) {
-        mCameraPitureOrVideoResultCallBack = cameraPictureOrVideoResultCallBack;
-    }
     //Camera图片数据-----------------------------------------
 
+    public CameraPictureOrVideoResultCallBack mCameraPitureOrVideoResultCallBack;
+    public void CameraPictureOrVideoResultCallBack(CameraPictureOrVideoResultCallBack cameraPictureOrVideoResultCallBack) {
+        mCameraPitureOrVideoResultCallBack = cameraPictureOrVideoResultCallBack;
+    }
     //录像拍照公共接口
     public interface CameraPictureOrVideoResultCallBack{
         void callResultBack(Observable<String> result);
@@ -119,9 +118,6 @@ public abstract class CameraModeBase {
          */
         void finishRecord();
     }
-
-
-
     //Camera录像数据-----------------------------------------
 
 }

@@ -6,15 +6,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 
-public abstract class BaseActivity extends AppCompatActivity {
+import com.example.wangchao.androidcamera1view.camera.event.GlobalHandler;
 
+
+public abstract class BaseActivity extends AppCompatActivity implements GlobalHandler.HandleMsgListener{
+
+    protected GlobalHandler mGlobalHandler;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         setSystemUIChange();
+        mGlobalHandler = GlobalHandler.getInstance();
+        mGlobalHandler.setHandleMsgListener(this);
         initDataManager();
+        initEvent();
         initView(savedInstanceState);
+    }
+
+    private void initEvent() {
     }
 
     @Override
@@ -22,6 +32,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         setStickyStyle(getWindow()); //焦点改变 Home键退出->进入
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     /**
      *  获取布局的Id
      * @return

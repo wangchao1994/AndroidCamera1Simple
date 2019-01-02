@@ -162,6 +162,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
             //录制完成
             case CameraContract.CameraViewCall.MODE_RECORD_FINISH:
                 Log.d("camera_log","录制完成------------>");
+                mCamerViewTvShowTime.setText("");
                 break;
             default:
                 break;
@@ -216,7 +217,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 }
                 break;
             case R.id.iv_video_controller:
-                int mode = (int) mBtnVideoRecord.getTag();
+                int mode = (int) mViewRecordController.getTag();
                 if (mode == CameraContract.CameraViewCall.MODE_RECORD_START) { //录制状态中，可以暂停
                     Log.d("camera_log","录制状态中--------------->暂停");
                     mCameraPresenter.stopRecord();

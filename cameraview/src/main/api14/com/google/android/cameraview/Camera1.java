@@ -17,6 +17,8 @@
 package com.google.android.cameraview;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -25,6 +27,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.example.cameraview.utils.CameraUtils;
@@ -104,7 +107,6 @@ public class Camera1 extends CameraViewImpl {
         chooseCamera();
         openCamera();
         if (mPreview.isReady()) {
-            Log.d("start_camera","openCamera------4-------");
             setUpPreview();
 
         }
@@ -336,6 +338,11 @@ public class Camera1 extends CameraViewImpl {
         for (Camera.Size size : mCameraParameters.getSupportedVideoSizes()) {
             mVideoSizes.add(new Size(size.width, size.height));
         }
+        //FlashModes
+        List<String> supportedFlashModes = mCameraParameters.getSupportedFlashModes();
+        for (int i = 0; i < supportedFlashModes.size(); i++) {
+            Log.d("prepareVideoRecorder","supportedFlashModes===="+supportedFlashModes.get(i));
+        }
         // AspectRatio
         if (mAspectRatio == null) {
             mAspectRatio = Constants.DEFAULT_ASPECT_RATIO;
@@ -365,6 +372,7 @@ public class Camera1 extends CameraViewImpl {
         size = chooseOptimalSize(sizes);
         //add adjustCameraParameters
         optimalVideoSize = CameraUtils.getOptimalVideoSize(mCameraParameters.getSupportedPictureSizes(), mCameraParameters.getSupportedPreviewSizes(), size.getWidth(), size.getHeight());
+
         // Always re-apply camera parameters
         // Largest picture size in this ratio
         final Size pictureSize = mPictureSizes.sizes(mAspectRatio).last();
@@ -374,6 +382,7 @@ public class Camera1 extends CameraViewImpl {
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
+        //mCameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
         mCamera.setParameters(mCameraParameters);
@@ -529,6 +538,7 @@ public class Camera1 extends CameraViewImpl {
         if (mMediaRecorder != null) {
             Log.d("prepareVideoRecorder","stopRecording--------mMediaRecorder.stop();-------");
             mMediaRecorder.stop();
+            mMediaRecorder.reset();
         }
         releaseMediaRecorder();
     }
@@ -538,18 +548,24 @@ public class Camera1 extends CameraViewImpl {
         return mMediaRecorder != null;
     }
 
+    @Override
+    public String getNextVideoPath() {
+        if (mNextVideoAbsolutePath != null){
+            return mNextVideoAbsolutePath;
+        }
+        return null;
+    }
+
     /**
      * 参数设置
      * @return
      */
     private boolean prepareVideoRecorder() {
-
         if (mCamera == null) return false;
         mMediaRecorder = new MediaRecorder();
 
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
-
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
@@ -560,7 +576,10 @@ public class Camera1 extends CameraViewImpl {
         Log.d("prepareVideoRecorder","mNextVideoAbsolutePath="+mNextVideoAbsolutePath);
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setPreviewDisplay(mPreview.getSurface());
-        mMediaRecorder.setOrientationHint(90);
+        int rotateDegree = getRotateDegree(getView().getContext());
+        Log.d("prepareVideoRecorder","rotateDegree=============="+rotateDegree);
+        mMediaRecorder.setOrientationHint(rotateDegree);
+
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
@@ -572,9 +591,12 @@ public class Camera1 extends CameraViewImpl {
             releaseMediaRecorder();
             return false;
         }
-        Log.d("prepareVideoRecorder","size.getWidth()-----------------============================0987654321");
         return true;
     }
+
+    /**
+     * 释放MediaRecorder
+     */
     private void releaseMediaRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder.reset();
@@ -582,6 +604,36 @@ public class Camera1 extends CameraViewImpl {
             mMediaRecorder = null;
             mCamera.lock();
         }
+    }
+
+    /**
+     * 获取旋转角度
+     * @param context
+     * @return
+     */
+    private int getRotateDegree(Context context){
+        int phoneDegree = 0;
+        int result = 0;
+        //获得手机方向
+        Activity activity = (Activity) context;
+        int phoneRotate =activity.getWindowManager().getDefaultDisplay().getOrientation();
+        //得到手机的角度
+        switch (phoneRotate) {
+            case Surface.ROTATION_0: phoneDegree = 0; break;        //0
+            case Surface.ROTATION_90: phoneDegree = 90; break;      //90
+            case Surface.ROTATION_180: phoneDegree = 180; break;    //180
+            case Surface.ROTATION_270: phoneDegree = 270; break;    //270
+        }
+        //分别计算前后置摄像头需要旋转的角度
+        if(mCameraId == 1){
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_FRONT, mCameraInfo);
+            result = (mCameraInfo.orientation + phoneDegree) % 360;
+            result = (360 - result) % 360;
+        }else{
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, mCameraInfo);
+            result = (mCameraInfo.orientation - phoneDegree +360) % 360;
+        }
+        return result;
     }
 //录像 end------------------------------------------------------
 }

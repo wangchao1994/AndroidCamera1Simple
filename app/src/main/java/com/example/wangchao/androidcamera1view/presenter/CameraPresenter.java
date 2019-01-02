@@ -177,6 +177,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     @Override
     public void callResultBack(Observable<String> result) {
         if (result != null) {
+            Log.d("callResultBack","callResultBack result="+result);
             Subscription subscription = result.subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

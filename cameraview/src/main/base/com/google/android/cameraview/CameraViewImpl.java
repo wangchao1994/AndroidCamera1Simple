@@ -84,5 +84,5 @@ public abstract class CameraViewImpl {
     public abstract void startRecording();
     public abstract void stopRecording();
     public abstract boolean isRecording();
-
+    public abstract String getNextVideoPath();
 }

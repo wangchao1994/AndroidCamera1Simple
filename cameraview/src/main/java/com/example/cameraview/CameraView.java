@@ -350,7 +350,12 @@ public class CameraView extends FrameLayout {
         //noinspection WrongConstant
         return mImpl.getFacing();
     }
-//add wangchao-----------------
+//add camera1-----------------
+
+    /**
+     * 获取当前Camera对象
+     * @return
+     */
     public Camera getCurrentCamera() {
         if (mImpl != null){
             return mImpl.getCurrentCamera();
@@ -364,6 +369,10 @@ public class CameraView extends FrameLayout {
         return null;
     }
 
+    /**
+     * 判断当前是否正在录像
+     * @return
+     */
     public boolean isRecording() {
         if (mImpl != null){
             return mImpl.isRecording();
@@ -371,6 +380,16 @@ public class CameraView extends FrameLayout {
         return false;
     }
 
+    /**
+     * 返回当前视频录像
+     * @return
+     */
+    public String getNextVideoPath() {
+        if (mImpl != null){
+            return mImpl.getNextVideoPath();
+        }
+        return null;
+    }
     /**
      * 开始录像
      */

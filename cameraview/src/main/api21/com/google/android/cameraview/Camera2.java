@@ -248,6 +248,7 @@ public class Camera2 extends CameraViewImpl {
     /*camera interface add start ---------------------------*/
     @Override
     public void startRecording() {
+
     }
 
     @Override
@@ -257,6 +258,11 @@ public class Camera2 extends CameraViewImpl {
     @Override
     public boolean isRecording() {
         return false;
+    }
+
+    @Override
+    public String getNextVideoPath() {
+        return null;
     }
     /*camera interface add end ---------------------------*/
 
