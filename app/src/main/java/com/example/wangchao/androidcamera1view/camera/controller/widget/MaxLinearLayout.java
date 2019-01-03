@@ -39,6 +39,7 @@ package com.example.wangchao.androidcamera1view.camera.controller.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.example.wangchao.androidcamera1view.R;
@@ -53,6 +54,7 @@ public class MaxLinearLayout extends LinearLayout {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MaxLinearLayout, 0, 0);
         mMaxHeight = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxHeight, Integer.MAX_VALUE);
         mMaxWidth = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxWidth, Integer.MAX_VALUE);
+        Log.d(TAG,"mMaxHeight="+mMaxHeight+"    mMaxWidth="+mMaxWidth);
     }
     
     @Override
