@@ -58,6 +58,8 @@ public abstract class CameraModeBase {
      */
     public abstract Set<AspectRatio> getSupportedAspectRatios();
     public abstract AspectRatio getCurrentAspectRatio();
+    public abstract void setCurrentAspectRatio(AspectRatio aspectRatio);
+
     /**
      *点击拍照Or录像事件
      */

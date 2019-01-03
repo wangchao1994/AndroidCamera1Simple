@@ -90,6 +90,14 @@ public class PhotoMode extends CameraModeBase {
     }
 
     @Override
+    public void setCurrentAspectRatio(AspectRatio aspectRatio) {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null) {
+            cameraView.setAspectRatio(aspectRatio);
+        }
+    }
+
+    @Override
     public void cameraPhotoOrVideoClick() {
         CameraView cameraView = getCameraView();
         if (cameraView!=null){

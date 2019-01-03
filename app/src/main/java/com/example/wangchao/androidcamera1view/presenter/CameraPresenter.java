@@ -2,6 +2,7 @@ package com.example.wangchao.androidcamera1view.presenter;
 
 import android.content.pm.PackageManager;
 import android.util.Log;
+import android.view.View;
 
 import com.example.cameraview.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
@@ -12,6 +13,7 @@ import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
 import com.example.wangchao.androidcamera1view.utils.permission.PermissionsManager;
 import com.example.wangchao.androidcamera1view.utils.time.TimingUtils;
 import com.example.wangchao.androidcamera1view.utils.toast.ToastUtils;
+import com.google.android.cameraview.AspectRatio;
 
 import java.util.concurrent.TimeUnit;
 
@@ -63,9 +65,9 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void switchCameraId(int direction) {
+    public void switchCameraId(int cameraId) {
         if (mCameraManager != null){
-            mCameraManager.switchCameraDirection(direction);
+            mCameraManager.switchCameraDirection(cameraId);
         }
     }
 
@@ -143,6 +145,24 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     @Override
     public int getCameraMode() {
         return currentCameraMode;
+    }
+
+    @Override
+    public void setCurrentAspectRatio(AspectRatio aspectRatio) {
+        if (mCameraManager != null){
+            mCameraManager.setAspectRatio(aspectRatio);
+        }
+    }
+
+    @Override
+    public void setViewShowOrHide(View view,boolean isShow) {
+        if (view != null){
+            if (isShow){
+                view.setVisibility(View.VISIBLE);
+            }else{
+                view.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override

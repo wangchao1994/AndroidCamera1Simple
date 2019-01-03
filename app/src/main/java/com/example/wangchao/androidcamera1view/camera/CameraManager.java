@@ -7,6 +7,7 @@ import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
 import com.example.wangchao.androidcamera1view.camera.mode.PhotoMode;
 import com.example.wangchao.androidcamera1view.camera.mode.VideoMode;
+import com.google.android.cameraview.AspectRatio;
 
 public class CameraManager {
 
@@ -17,7 +18,6 @@ public class CameraManager {
     private CameraModeBase mVideoMode;
     public static final int  MODE_CAMERA = 1;//拍照模式
     public static final int MODE_VIDEO_RECORD = 2;//录像模式
-    private int currentCameraDirection;
     public CameraManager(ICameraImpl iCameraImpl){
         mICameraImpl = iCameraImpl;
         mPhotoMode = new PhotoMode(mICameraImpl);
@@ -69,13 +69,10 @@ public class CameraManager {
     }
     /**
      * 切换前后摄
-     * @param direction
+     * @param cameraId
      */
-    public void switchCameraDirection(int direction){
-        if (currentCameraDirection == direction){
-            return;
-        }
-        mCurrentMode.switchCameraId(direction);
+    public void switchCameraDirection(int cameraId){
+        mCurrentMode.switchCameraId(cameraId);
     }
     /**
      *拍照/录像
@@ -125,6 +122,7 @@ public class CameraManager {
     public  void pauseVideoRecord(){
         ((VideoMode) mVideoMode).pauseRecordingVideo();
     }
+
     /**
      * save Video Dialog
      */
@@ -136,5 +134,17 @@ public class CameraManager {
     }
     public boolean isShowingProgress() {
         return ((VideoMode) mVideoMode).getRotateProgress().isShowing();
+    }
+
+    /**
+     * get AspectRatio
+     * @return
+     */
+    public AspectRatio getCurrentSupportAspectRatio(){
+        AspectRatio currentAspectRatio = mCurrentMode.getCurrentAspectRatio();
+        return currentAspectRatio;
+    }
+    public void setAspectRatio(AspectRatio ratio){
+        mCurrentMode.setCurrentAspectRatio(ratio);
     }
 }

@@ -1,7 +1,10 @@
 package com.example.wangchao.androidcamera1view;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -18,8 +21,10 @@ import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
 import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraContract;
+import com.example.wangchao.androidcamera1view.camera.event.GlobalAction;
 import com.example.wangchao.androidcamera1view.presenter.CameraPresenter;
 import com.example.wangchao.androidcamera1view.utils.glide.GlideLoader;
+import com.google.android.cameraview.AspectRatio;
 
 /**
  * Main CameraView
@@ -43,7 +48,6 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     private String mFilePath;
     private TextView mCamerViewTvShowTime;
     private ImageView mViewRecordController;
-
     private final int[] FLASH_OPTIONS = {
             CameraView.FLASH_AUTO,
             CameraView.FLASH_OFF,
@@ -55,6 +59,8 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
             R.drawable.ic_flash_auto,
             R.drawable.ic_flash_on,
     };
+    private AlertDialog aAspectRatioAlertDialog;
+    private int mAspectRatioItem;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -74,7 +80,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootCameraView = inflater.inflate(R.layout.fragment_camera, container, false);
         initView(mRootCameraView);
         return mRootCameraView;
@@ -133,6 +139,10 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         mFilePath = filePath;
         Log.d("loadPictureResult","filePath-------------"+filePath);
         GlideLoader.loadNetWorkResource(BaseApplication.getInstance(),filePath,mCameraViewThumb);
+        //delayed
+        if (mICameraImpl.getGlobalHandler() != null) {
+            mICameraImpl.getGlobalHandler().sendEmptyMessageDelayed(GlobalAction.SAVE_VIDEO_DIALOG_DISMISS,1000);
+        }
     }
 
     /**
@@ -154,6 +164,13 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
             //录制开始
             case CameraContract.CameraViewCall.MODE_RECORD_START:
                 Log.d("camera_log","录制开始------------>");
+                if (mCameraPresenter != null){
+                    mCameraPresenter.setViewShowOrHide(mCamerViewTvShowTime,true);
+                    mCameraPresenter.setViewShowOrHide(mViewRecordController,true);
+                    mCameraPresenter.setViewShowOrHide(mCameraAspectRadio,false);
+                    mCameraPresenter.setViewShowOrHide(mCameraFlashAuto,false);
+                    mCameraPresenter.setViewShowOrHide(mCameraIdSwitch,false);
+                }
                 break;
             //录制暂停
             case CameraContract.CameraViewCall.MODE_RECORD_STOP:
@@ -163,13 +180,19 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
             case CameraContract.CameraViewCall.MODE_RECORD_FINISH:
                 Log.d("camera_log","录制完成------------>");
                 mCamerViewTvShowTime.setText("");
+                if (mCameraPresenter != null){
+                    mCameraPresenter.setViewShowOrHide(mCamerViewTvShowTime,false);
+                    mCameraPresenter.setViewShowOrHide(mViewRecordController,false);
+                    mCameraPresenter.setViewShowOrHide(mCameraAspectRadio,true);
+                    mCameraPresenter.setViewShowOrHide(mCameraFlashAuto,true);
+                    mCameraPresenter.setViewShowOrHide(mCameraIdSwitch,true);
+                }
                 break;
             default:
                 break;
         }
         mViewRecordController.setTag(mode);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -203,13 +226,42 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 if (mCameraPresenter!=null){
                     //获取当前Id
                     int cameraFacingId = mCameraManager.getCameraFacingId();
+                    Log.d("wangchao_camera","isCameraBack------------------------ 1 "+cameraFacingId);
                     mCameraPresenter.switchCameraId(cameraFacingId == CameraView.FACING_FRONT ?CameraView.FACING_BACK : CameraView.FACING_FRONT);
                 }
                 break;
             case R.id.iv_aspect_switch:
-                if (mCameraPresenter!=null){
-
+                String[] aspectRatios = {"4:3","16:9"};
+                AspectRatio currentSupportAspectRatio = mCameraManager.getCurrentSupportAspectRatio();
+                String mAspectRatio = currentSupportAspectRatio.toString();
+                if (mAspectRatio.equals(aspectRatios[0])){
+                    mAspectRatioItem = 0;
+                }else if (mAspectRatio.equals(aspectRatios[1])){
+                    mAspectRatioItem = 1;
                 }
+                AlertDialog.Builder builder =new AlertDialog.Builder(getActivity())
+                        .setTitle("")
+                        .setSingleChoiceItems(aspectRatios, mAspectRatioItem, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case 0:
+                                        if (mCameraPresenter != null){
+                                            mCameraPresenter.setCurrentAspectRatio(AspectRatio.parse("4:3"));
+                                        }
+                                        break;
+                                    case 1:
+                                        if (mCameraPresenter != null){
+                                            mCameraPresenter.setCurrentAspectRatio(AspectRatio.parse("16:9"));
+                                        }
+                                        break;
+                                }
+                                aAspectRatioAlertDialog.dismiss();
+                            }
+                        });
+                aAspectRatioAlertDialog = builder.create();
+                aAspectRatioAlertDialog.show();
+
                 break;
             case R.id.iv_last_thumb:
                 if (mFilePath != null){
@@ -221,8 +273,10 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 if (mode == CameraContract.CameraViewCall.MODE_RECORD_START) { //录制状态中，可以暂停
                     Log.d("camera_log","录制状态中--------------->暂停");
                     mCameraPresenter.stopRecord();
+                    mViewRecordController.setImageResource(R.drawable.recording_play);
                 }else if (mode == CameraContract.CameraViewCall.MODE_RECORD_STOP) {//暂停状态，可以继续开始录制
                     mCameraPresenter.restartRecord();
+                    mViewRecordController.setImageResource(R.drawable.recording_pause);
                     Log.d("camera_log","暂停状态---------------->继续开始录制");
                 }
                 break;

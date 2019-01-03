@@ -13,6 +13,7 @@ import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.event.GlobalAction;
 import com.example.wangchao.androidcamera1view.camera.event.GlobalHandler;
 import com.example.wangchao.androidcamera1view.presenter.CameraPresenter;
+import com.example.wangchao.androidcamera1view.utils.sp.PreferencesUtils;
 import com.example.wangchao.androidcamera1view.utils.thread.WorkThreadManager;
 
 public class CameraActivity extends BaseActivity implements ICameraImpl {
@@ -46,6 +47,14 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    @Override
+    public PreferencesUtils getPreferencesUtils() {
+        if (mPreferencesUtils != null){
+            return mPreferencesUtils;
+        }
+        return null;
     }
 
     @Override

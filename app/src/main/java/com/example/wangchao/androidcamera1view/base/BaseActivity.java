@@ -7,11 +7,14 @@ import android.view.View;
 import android.view.Window;
 
 import com.example.wangchao.androidcamera1view.camera.event.GlobalHandler;
+import com.example.wangchao.androidcamera1view.utils.sp.PreferencesUtils;
 
 
 public abstract class BaseActivity extends AppCompatActivity implements GlobalHandler.HandleMsgListener{
 
     protected GlobalHandler mGlobalHandler;
+    protected PreferencesUtils mPreferencesUtils;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GlobalHa
         setSystemUIChange();
         mGlobalHandler = GlobalHandler.getInstance();
         mGlobalHandler.setHandleMsgListener(this);
+        mPreferencesUtils = new PreferencesUtils(this);
         initDataManager();
         initEvent();
         initView(savedInstanceState);

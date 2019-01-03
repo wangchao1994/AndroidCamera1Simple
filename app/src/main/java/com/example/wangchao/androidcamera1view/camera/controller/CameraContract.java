@@ -1,6 +1,9 @@
 package com.example.wangchao.androidcamera1view.camera.controller;
 
+import android.view.View;
+
 import com.example.cameraview.CameraView;
+import com.google.android.cameraview.AspectRatio;
 
 public interface CameraContract {
 
@@ -9,14 +12,15 @@ public interface CameraContract {
         void onResume();
         void onPause();
         void takePictureOrVideo();
-        void switchCameraId(int direction);
+        void switchCameraId(int cameraId);
         void setFlashAuto(int autoFlash);
         void setPictureCallBack();
         void switchCameraMode(int currentMode);
         void stopRecord();
         void restartRecord();
         int getCameraMode();
-
+        void setCurrentAspectRatio(AspectRatio aspectRatio);
+        void setViewShowOrHide(View view,boolean isShow);
     }
 
     interface CameraViewCall<T extends Presenter> {

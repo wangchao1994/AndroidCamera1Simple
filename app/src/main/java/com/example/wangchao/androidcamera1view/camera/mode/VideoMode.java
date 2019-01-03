@@ -84,6 +84,12 @@ public class VideoMode extends CameraModeBase {
     public AspectRatio getCurrentAspectRatio() {
         return null;
     }
+
+    @Override
+    public void setCurrentAspectRatio(AspectRatio aspectRatio) {
+
+    }
+
     @Override
     public void addCameraPictureCallBack() {
         CameraView cameraView = getCameraView();
@@ -177,10 +183,7 @@ public class VideoMode extends CameraModeBase {
             }
             Log.d(TAG,"video file save path======>"+mNextVideoAbsolutePath);
         }
-        //delayed
-        if (mICameraImpl.getGlobalHandler() != null) {
-            mICameraImpl.getGlobalHandler().sendEmptyMessageDelayed(GlobalAction.SAVE_VIDEO_DIALOG_DISMISS,1500);
-        }
+
     }
     /**
      * 暂停后又从新恢复录制，合并多个视频文件

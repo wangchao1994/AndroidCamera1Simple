@@ -39,22 +39,19 @@ package com.example.wangchao.androidcamera1view.camera.controller.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.example.wangchao.androidcamera1view.R;
 
 public class MaxLinearLayout extends LinearLayout {
     private static final String TAG = MaxLinearLayout.class.getSimpleName();
-    private int mMaxHeight = 0;
-    private int mMaxWidth = 0;
-    
+    private int mMaxHeight;
+    private int mMaxWidth;
     public MaxLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MaxLinearLayout, 0, 0);
         mMaxHeight = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxHeight, Integer.MAX_VALUE);
         mMaxWidth = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxWidth, Integer.MAX_VALUE);
-        Log.d(TAG,"mMaxHeight="+mMaxHeight+"    mMaxWidth="+mMaxWidth);
     }
     
     @Override
@@ -67,7 +64,6 @@ public class MaxLinearLayout extends LinearLayout {
         int specMode = MeasureSpec.getMode(spec);
         int specSize = MeasureSpec.getSize(spec);
         specSize = max < specSize ? max : specSize;
-        int result = MeasureSpec.makeMeasureSpec(specMode, specSize);
-        return result;
+        return MeasureSpec.makeMeasureSpec(specMode, specSize);
     }
 }
