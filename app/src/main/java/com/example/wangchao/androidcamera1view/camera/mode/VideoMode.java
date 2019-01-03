@@ -2,7 +2,6 @@ package com.example.wangchao.androidcamera1view.camera.mode;
 
 import android.util.Log;
 import com.example.cameraview.CameraView;
-import com.example.wangchao.androidcamera1view.R;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 import rx.Observable;
 import rx.Subscription;
@@ -73,6 +71,10 @@ public class VideoMode extends CameraModeBase {
 
     @Override
     public void setAutoFlash(int autoFlash) {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            cameraView.setFlash(autoFlash);
+        }
     }
 
     @Override
@@ -82,12 +84,20 @@ public class VideoMode extends CameraModeBase {
 
     @Override
     public AspectRatio getCurrentAspectRatio() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            AspectRatio aspectRatio = cameraView.getAspectRatio();
+            return aspectRatio;
+        }
         return null;
     }
 
     @Override
     public void setCurrentAspectRatio(AspectRatio aspectRatio) {
-
+        CameraView cameraView = getCameraView();
+        if (cameraView != null) {
+            cameraView.setAspectRatio(aspectRatio);
+        }
     }
 
     @Override

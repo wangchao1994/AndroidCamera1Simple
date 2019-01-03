@@ -1,8 +1,12 @@
 package com.example.wangchao.androidcamera1view.camera;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
-
 import com.example.cameraview.CameraView;
+import com.example.cameraview.utils.file.FileUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
 import com.example.wangchao.androidcamera1view.camera.mode.PhotoMode;
@@ -12,18 +16,29 @@ import com.google.android.cameraview.AspectRatio;
 public class CameraManager {
 
     public static final String TAG = CameraManager.class.getSimpleName();
+    private static CameraManager mCameraManager;
     private ICameraImpl mICameraImpl;
     private CameraModeBase mCurrentMode;
     private CameraModeBase mPhotoMode;
     private CameraModeBase mVideoMode;
     public static final int  MODE_CAMERA = 1;//拍照模式
     public static final int MODE_VIDEO_RECORD = 2;//录像模式
-    public CameraManager(ICameraImpl iCameraImpl){
+    private CameraManager(ICameraImpl iCameraImpl){
         mICameraImpl = iCameraImpl;
         mPhotoMode = new PhotoMode(mICameraImpl);
         mVideoMode = new VideoMode(mICameraImpl);
         //默认为拍照模式
         mCurrentMode = mPhotoMode;
+    }
+    public static CameraManager getCameraManagerInstance(ICameraImpl iCameraImpl) {
+        if (null == mCameraManager){
+            synchronized (CameraManager.class){
+                if (null == mCameraManager){
+                    mCameraManager = new CameraManager(iCameraImpl);
+                }
+            }
+        }
+        return mCameraManager;
     }
     /**
      * 设置拍照回调
@@ -146,5 +161,25 @@ public class CameraManager {
     }
     public void setAspectRatio(AspectRatio ratio){
         mCurrentMode.setCurrentAspectRatio(ratio);
+    }
+    /**
+     * 获取最近一次拍照的图片ID
+     * @param context
+     * @return
+     */
+    public String getRecentlyPhotoId(Context context) {
+        //String searchPath = MediaStore.Files.FileColumns.DATA + " LIKE '%" + "/DCIM/Camera/" + "%' ";
+        String searchPath = MediaStore.Files.FileColumns.DATA + " LIKE '%" + FileUtils.DIRECTORY + "%' ";
+        Uri uri = MediaStore.Files.getContentUri("external");
+        Cursor cursor = context.getContentResolver().query(
+                uri, new String[]{MediaStore.Files.FileColumns._ID}, searchPath, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
+        String filePath = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
+        }
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return filePath;
     }
 }

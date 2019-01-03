@@ -53,6 +53,7 @@ public class SurfaceViewPreview extends PreviewImpl {
             @Override
             public void surfaceDestroyed(SurfaceHolder h) {
                 setSize(0, 0);
+                Log.d("SurfaceViewPreview","---------------------surfaceDestroyed-------------------------------->");
             }
         });
     }

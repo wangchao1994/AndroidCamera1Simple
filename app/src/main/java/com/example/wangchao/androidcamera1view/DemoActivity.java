@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.cameraview.CameraView;
+import com.google.android.cameraview.AspectRatio;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -192,7 +193,7 @@ public class DemoActivity extends AppCompatActivity  implements
         }
         return super.onOptionsItemSelected(item);
     }
-
+//
 //    @Override
 //    public void onAspectRatioSelected(@NonNull AspectRatio ratio) {
 //        if (mCameraView != null) {

@@ -1,7 +1,5 @@
 package com.example.wangchao.androidcamera1view.camera.mode;
 
-import android.util.Log;
-
 import com.example.cameraview.CameraView;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;

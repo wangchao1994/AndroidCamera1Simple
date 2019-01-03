@@ -1,6 +1,7 @@
 package com.example.wangchao.androidcamera1view.camera.controller;
 
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.cameraview.CameraView;
 import com.google.android.cameraview.AspectRatio;
@@ -21,10 +22,12 @@ public interface CameraContract {
         int getCameraMode();
         void setCurrentAspectRatio(AspectRatio aspectRatio);
         void setViewShowOrHide(View view,boolean isShow);
+        void setRecentlyPhotoId(String recentlyPhotoId);
     }
 
     interface CameraViewCall<T extends Presenter> {
         CameraView getCameraView();
+        ImageView  getCameraThumbView();
         /**
          * 加载拍照的图片路径
          * @param filePath

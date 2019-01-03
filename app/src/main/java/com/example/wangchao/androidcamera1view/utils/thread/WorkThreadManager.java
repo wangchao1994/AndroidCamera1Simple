@@ -7,6 +7,7 @@ import android.os.HandlerThread;
  * 后台线程和对应Handler的管理类
  */
 public class WorkThreadManager {
+    private static WorkThreadManager mWorkThreadManager;
     private final String thread_name = "CameraWorkThread";
     /**
      * 后台线程处理
@@ -14,9 +15,17 @@ public class WorkThreadManager {
      */
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
-
-    public static WorkThreadManager newInstance() {
-         return new WorkThreadManager();
+    private WorkThreadManager(){
+    }
+    public static WorkThreadManager getWorkThreadManagerInstance() {
+        if (null == mWorkThreadManager){
+            synchronized (WorkThreadManager.class){
+                if (null == mWorkThreadManager){
+                    mWorkThreadManager = new WorkThreadManager();
+                }
+            }
+        }
+        return mWorkThreadManager;
     }
     /**
      * 开启一个线程和对应的Handler

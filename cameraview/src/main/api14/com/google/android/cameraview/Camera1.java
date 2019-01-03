@@ -39,7 +39,7 @@ import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("deprecation")
-public class Camera1 extends CameraViewImpl {
+public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecordCallBack{
 
     private static final int INVALID_CAMERA_ID = -1;
 
@@ -80,10 +80,6 @@ public class Camera1 extends CameraViewImpl {
     private int mDisplayOrientation;
     private MediaRecorder mMediaRecorder;
     private Size size;
-    private String outputMediaFileType;
-    private Uri outputMediaFileUri;
-    private int mOptVideoWidth;
-    private int mOptVideoHeight;
     private String mNextVideoAbsolutePath;
     private final SizeMap mVideoSizes = new SizeMap();
     private Camera.Size optimalVideoSize;
@@ -634,6 +630,11 @@ public class Camera1 extends CameraViewImpl {
             result = (mCameraInfo.orientation - phoneDegree +360) % 360;
         }
         return result;
+    }
+
+    @Override
+    public void onReleaseRecord() {
+        Log.d("wangchao","onReleaseRecord---------------------------------->");
     }
 //录像 end------------------------------------------------------
 }

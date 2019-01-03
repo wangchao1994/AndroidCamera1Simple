@@ -40,8 +40,8 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
 
     @Override
     protected void initDataManager() {
-        mCameraManager = new CameraManager(this);
-        mWorkThreadManager = WorkThreadManager.newInstance();
+        mCameraManager = CameraManager.getCameraManagerInstance(this);
+        mWorkThreadManager = WorkThreadManager.getWorkThreadManagerInstance();
     }
 
     @Override

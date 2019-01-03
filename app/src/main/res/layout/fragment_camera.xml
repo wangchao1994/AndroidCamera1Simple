@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary"
+    android:background="@android:color/darker_gray"
     tools:context=".CameraFragment">
 
     <com.example.cameraview.CameraView
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:textSize="18sp"
             android:textColor="@color/setting_item_text_color_normal"
             android:drawableStart="@drawable/recording_point"
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/tv_show_time_view"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:layout_marginStart="10dp"
             android:src="@drawable/recording_pause"/>
     </RelativeLayout>

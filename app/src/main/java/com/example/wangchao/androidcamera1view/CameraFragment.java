@@ -3,7 +3,10 @@ package com.example.wangchao.androidcamera1view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -113,6 +116,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         if (mCameraPresenter != null){
             mCameraPresenter.onResume();
             mCameraPresenter.setPictureCallBack();
+            mCameraPresenter.setRecentlyPhotoId(mCameraManager.getRecentlyPhotoId(BaseApplication.getInstance()));
         }
     }
 
@@ -135,6 +139,14 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     }
 
     @Override
+    public ImageView getCameraThumbView() {
+        if (mCameraViewThumb != null){
+            return mCameraViewThumb;
+        }
+        return null;
+    }
+
+    @Override
     public void loadPictureResult(String filePath) {
         mFilePath = filePath;
         Log.d("loadPictureResult","filePath-------------"+filePath);
@@ -144,7 +156,6 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
             mICameraImpl.getGlobalHandler().sendEmptyMessageDelayed(GlobalAction.SAVE_VIDEO_DIALOG_DISMISS,1000);
         }
     }
-
     /**
      * 时间显示
      * @param timing

@@ -1,8 +1,12 @@
 package com.example.wangchao.androidcamera1view.presenter;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.cameraview.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
@@ -10,6 +14,7 @@ import com.example.wangchao.androidcamera1view.base.BaseApplication;
 import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraContract;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
+import com.example.wangchao.androidcamera1view.utils.glide.GlideLoader;
 import com.example.wangchao.androidcamera1view.utils.permission.PermissionsManager;
 import com.example.wangchao.androidcamera1view.utils.time.TimingUtils;
 import com.example.wangchao.androidcamera1view.utils.toast.ToastUtils;
@@ -160,8 +165,18 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
             if (isShow){
                 view.setVisibility(View.VISIBLE);
             }else{
-                view.setVisibility(View.GONE);
+                view.setVisibility(View.INVISIBLE);
             }
+        }
+    }
+
+    @Override
+    public void setRecentlyPhotoId(String recentlyPhotoId) {
+        Log.d("setRecentlyPhotoId","setRecentlyPhotoId----->"+recentlyPhotoId);
+        ImageView cameraThumbView = mCameraView.getCameraThumbView();
+        if (cameraThumbView != null){
+            Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(mICameraImp.getActivity().getContentResolver(), Long.parseLong(recentlyPhotoId), MediaStore.Images.Thumbnails.MICRO_KIND, new BitmapFactory.Options());
+            cameraThumbView.setImageBitmap(bitmap);
         }
     }
 
