@@ -129,8 +129,7 @@ public class RotateLayout extends ViewGroup implements Rotatable {
     // Rotate the view counter-clockwise
     @Override
     public void setOrientation(int orientation, boolean animation) {
-        Log.v(TAG, "setOrientation(" + orientation + ", " + animation + ") mOrientation="
-                + mOrientation);
+        Log.v(TAG, "setOrientation(" + orientation + ", " + animation + ") mOrientation=" + mOrientation);
         orientation = orientation % 360;
         if (mOrientation == orientation) {
             return;

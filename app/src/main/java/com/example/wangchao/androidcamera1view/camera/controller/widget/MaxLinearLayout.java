@@ -41,17 +41,18 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
+import com.example.wangchao.androidcamera1view.R;
+
 public class MaxLinearLayout extends LinearLayout {
-    private static final String TAG = "MaxLinearLayout";
-    
-    private final int mMaxHeight = 0;
-    private final int mMaxWidth = 0;
+    private static final String TAG = MaxLinearLayout.class.getSimpleName();
+    private int mMaxHeight = 0;
+    private int mMaxWidth = 0;
     
     public MaxLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MaxLinearLayout, 0, 0);
-        //mMaxHeight = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxHeight, Integer.MAX_VALUE);
-        //mMaxWidth = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxWidth, Integer.MAX_VALUE);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MaxLinearLayout, 0, 0);
+        mMaxHeight = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxHeight, Integer.MAX_VALUE);
+        mMaxWidth = a.getDimensionPixelSize(R.styleable.MaxLinearLayout_maxWidth, Integer.MAX_VALUE);
     }
     
     @Override
