@@ -162,7 +162,6 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
      */
     @Override
     public void setTimeShow(String timing) {
-        Log.d("camera_log","current time is------> "+timing);
         mCamerViewTvShowTime.setText(timing);
     }
     /**
