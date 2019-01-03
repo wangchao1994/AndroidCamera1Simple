@@ -104,11 +104,9 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
     public void handleMsg(Message msg) {
         switch (msg.what){
             case GlobalAction.SAVE_VIDEO_DIALOG_SHOW:
-                Log.d("msg","----SAVE_VIDEO_DIALOG_SHOW-------------");
                 mCameraManager.showProgress(getResources().getString(R.string.save_video));
                 break;
             case GlobalAction.SAVE_VIDEO_DIALOG_DISMISS:
-                Log.d("msg","-------SAVE_VIDEO_DIALOG_DISMISS----------");
                 if(mCameraManager.isShowingProgress()){
                     mCameraManager.dismissProgress();
                 }
