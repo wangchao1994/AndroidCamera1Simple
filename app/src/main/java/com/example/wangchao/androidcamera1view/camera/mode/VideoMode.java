@@ -114,11 +114,9 @@ public class VideoMode extends CameraModeBase {
         if (cameraView == null) return;
         cameraView.stopRecording();
         if (isFinishing){
-            Log.d("chao_cc","mICameraImpl.getGlobalHandler()="+mICameraImpl.getGlobalHandler());
             if (mICameraImpl.getGlobalHandler() != null){
                 mICameraImpl.getGlobalHandler().sendEmptyMessage(GlobalAction.SAVE_VIDEO_DIALOG_SHOW);
             }
-            //showProgress(getCameraView().getContext().getResources().getString(R.string.save_video));
         }
         /**视频合并 start-------------------------------------------------------*/
         mNextVideoAbsolutePath = cameraView.getNextVideoPath();
@@ -181,7 +179,7 @@ public class VideoMode extends CameraModeBase {
         }
         //delayed
         if (mICameraImpl.getGlobalHandler() != null) {
-            mICameraImpl.getGlobalHandler().sendEmptyMessage(GlobalAction.SAVE_VIDEO_DIALOG_DISMISS);
+            mICameraImpl.getGlobalHandler().sendEmptyMessageDelayed(GlobalAction.SAVE_VIDEO_DIALOG_DISMISS,1500);
         }
     }
     /**
