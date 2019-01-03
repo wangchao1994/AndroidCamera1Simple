@@ -562,7 +562,6 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
         mMediaRecorder = new MediaRecorder();
         View currentView = mPreview.getCurrentView();
         if (currentView != null){
-            Log.d("prepareVideoRecorder","prepareVideoRecorder------->keepOn");
             currentView.setKeepScreenOn(true);
         }
         mCamera.unlock();
