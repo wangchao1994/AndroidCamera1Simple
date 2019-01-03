@@ -69,6 +69,14 @@ public class SurfaceViewPreview extends PreviewImpl {
     }
 
     @Override
+    public View getCurrentView() {
+        if (mSurfaceView != null){
+            return mSurfaceView;
+        }
+        return null;
+    }
+
+    @Override
     public View getView() {
         return mSurfaceView;
     }

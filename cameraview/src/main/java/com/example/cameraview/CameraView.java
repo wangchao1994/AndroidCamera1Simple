@@ -150,12 +150,12 @@ public class CameraView extends FrameLayout {
     private PreviewImpl createPreviewImpl(Context context) {
         PreviewImpl preview;
         //camera1/camera2自适应 change
-        /*if (Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < 14) {
             preview = new SurfaceViewPreview(context, this);
         } else {
+            Log.d("createPreviewImpl","createPreviewImpl---------------------->");
             preview = new TextureViewPreview(context, this);
-        }*/
-        preview = new SurfaceViewPreview(context, this);
+        }
         return preview;
     }
 

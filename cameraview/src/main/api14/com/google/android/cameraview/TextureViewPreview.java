@@ -75,6 +75,14 @@ public class TextureViewPreview extends PreviewImpl {
     }
 
     @Override
+    public View getCurrentView() {
+        if (mTextureView != null){
+            return mTextureView;
+        }
+        return null;
+    }
+
+    @Override
     public Surface getSurface() {
         return new Surface(mTextureView.getSurfaceTexture());
     }

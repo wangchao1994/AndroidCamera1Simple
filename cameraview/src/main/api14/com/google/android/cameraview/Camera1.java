@@ -29,6 +29,7 @@ import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.example.cameraview.utils.CameraUtils;
 import com.example.cameraview.utils.file.FileUtils;
@@ -559,7 +560,11 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
     private boolean prepareVideoRecorder() {
         if (mCamera == null) return false;
         mMediaRecorder = new MediaRecorder();
-
+        View currentView = mPreview.getCurrentView();
+        if (currentView != null){
+            Log.d("prepareVideoRecorder","prepareVideoRecorder------->keepOn");
+            currentView.setKeepScreenOn(true);
+        }
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
