@@ -1,9 +1,6 @@
 package com.example.wangchao.androidcamera1view.presenter;
 
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -171,12 +168,13 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void setRecentlyPhotoId(String recentlyPhotoId) {
-        Log.d("setRecentlyPhotoId","setRecentlyPhotoId----->"+recentlyPhotoId);
+    public void setRecentlyPhotoId(String recentlyPhotoPath) {
+        Log.d("recentlyPhotoPath","recentlyPhotoPath----->"+recentlyPhotoPath);
         ImageView cameraThumbView = mCameraView.getCameraThumbView();
         if (cameraThumbView != null){
-            Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(mICameraImp.getActivity().getContentResolver(), Long.parseLong(recentlyPhotoId), MediaStore.Images.Thumbnails.MICRO_KIND, new BitmapFactory.Options());
-            cameraThumbView.setImageBitmap(bitmap);
+            //Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(mICameraImp.getActivity().getContentResolver(), Long.parseLong(recentlyPhotoId), MediaStore.Images.Thumbnails.MICRO_KIND, new BitmapFactory.Options());
+            //cameraThumbView.setImageBitmap(bitmap);
+            GlideLoader.loadNetWorkResource(BaseApplication.getInstance(),recentlyPhotoPath,cameraThumbView);
         }
     }
 

@@ -22,7 +22,7 @@ public interface CameraContract {
         int getCameraMode();
         void setCurrentAspectRatio(AspectRatio aspectRatio);
         void setViewShowOrHide(View view,boolean isShow);
-        void setRecentlyPhotoId(String recentlyPhotoId);
+        void setRecentlyPhotoId(String recentlyPhotoPath);
     }
 
     interface CameraViewCall<T extends Presenter> {
