@@ -168,7 +168,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void setRecentlyPhotoId(String recentlyPhotoPath) {
+    public void setRecentlyPhotoPath(String recentlyPhotoPath) {
         Log.d("recentlyPhotoPath","recentlyPhotoPath----->"+recentlyPhotoPath);
         ImageView cameraThumbView = mCameraView.getCameraThumbView();
         if (cameraThumbView != null){

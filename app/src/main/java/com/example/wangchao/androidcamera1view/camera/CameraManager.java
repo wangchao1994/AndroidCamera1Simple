@@ -170,7 +170,7 @@ public class CameraManager {
      * @param context
      * @return
      */
-    public String getRecentlyPhotoId(Context context) {
+    public String getRecentlyPhotoPath(Context context) {
         //String searchPath = MediaStore.Files.FileColumns.DATA + " LIKE '%" + "/DCIM/Camera/" + "%' ";
         String searchPath = MediaStore.Files.FileColumns.DATA + " LIKE '%" + FileUtils.DIRECTORY + "%' ";
         Uri uri = MediaStore.Files.getContentUri("external");

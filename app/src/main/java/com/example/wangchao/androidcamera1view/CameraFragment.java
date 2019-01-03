@@ -116,7 +116,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         if (mCameraPresenter != null){
             mCameraPresenter.onResume();
             mCameraPresenter.setPictureCallBack();
-            mCameraPresenter.setRecentlyPhotoId(mCameraManager.getRecentlyPhotoId(BaseApplication.getInstance()));
+            mCameraPresenter.setRecentlyPhotoPath(mCameraManager.getRecentlyPhotoPath(BaseApplication.getInstance()));
         }
     }
 
