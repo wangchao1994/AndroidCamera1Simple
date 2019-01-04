@@ -48,6 +48,14 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/iv_aspect_switch"
             android:src="@drawable/ic_zoom"/>
+        <ImageView
+            android:id="@+id/iv_change_focus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/iv_add_zoom"
+            android:src="@drawable/ic_zoom"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"

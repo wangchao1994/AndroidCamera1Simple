@@ -3,10 +3,8 @@ package com.example.wangchao.androidcamera1view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -52,6 +50,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     private TextView mCamerViewTvShowTime;
     private ImageView mViewRecordController;
     private ImageView mCameraViewZoom;
+    private ImageView mCameraViewFoucs;
 
     private final int[] FLASH_OPTIONS = {
             CameraUtils.FLASH_AUTO,
@@ -101,6 +100,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         mCameraViewThumb = mRootCameraView.findViewById(R.id.iv_last_thumb);
         mCamerViewTvShowTime = mRootCameraView.findViewById(R.id.tv_show_time_view);
         mCameraViewZoom = mRootCameraView.findViewById(R.id.iv_add_zoom);
+        mCameraViewFoucs = mRootCameraView.findViewById(R.id.iv_change_focus);
         mViewRecordController = mRootCameraView.findViewById(R.id.iv_video_controller);
         //录制状态标志
         mViewRecordController.setTag(CameraContract.CameraViewCall.MODE_RECORD_FINISH);
@@ -112,6 +112,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         mCameraAspectRadio.setOnClickListener(this);
         mCameraViewThumb.setOnClickListener(this);
         mCameraViewZoom.setOnClickListener(this);
+        mCameraViewFoucs.setOnClickListener(this);
     }
 
     @Override
@@ -297,6 +298,11 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 zoomValues += 1.0f;
                 Log.d("onResume","zoomValues-------------->"+zoomValues);
                 mCameraPresenter.setZoom(zoomValues);
+                break;
+            case R.id.iv_change_focus:
+                Log.d("camera_log","--------------->mCameraPresenter.getFocusMode()="+mCameraPresenter.getFocusMode());
+                boolean focusMode = mCameraPresenter.getFocusMode();
+                mCameraPresenter.setFocusMode(!focusMode);
                 break;
             case R.id.iv_video_controller:
                 int mode = (int) mViewRecordController.getTag();

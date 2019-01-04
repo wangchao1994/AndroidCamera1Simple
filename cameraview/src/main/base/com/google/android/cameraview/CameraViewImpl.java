@@ -87,4 +87,6 @@ public abstract class CameraViewImpl {
     public abstract String getNextVideoPath();
     public abstract void setZoom(float zoomValues);
     public abstract float getZoom();
+    public abstract void setAELock(boolean isLock);
+    public abstract boolean getAELock();
 }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.cameraview.CameraView;
 import com.example.cameraview.utils.CameraUtils;
 import com.google.android.cameraview.AspectRatio;
+import com.google.android.cameraview.CallbackBridge;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -212,7 +213,7 @@ public class DemoActivity extends AppCompatActivity  implements
         return mBackgroundHandler;
     }
 
-    private CameraView.Callback mCallback = new CameraView.Callback() {
+    private CallbackBridge.Callback mCallback = new CallbackBridge.Callback() {
 
         @Override
         public void onCameraOpened(CameraView cameraView) {

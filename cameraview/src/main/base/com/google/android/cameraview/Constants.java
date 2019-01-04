@@ -34,4 +34,5 @@ public interface Constants {
     int LANDSCAPE_270 = 270;
 
     float ZOOM_VALUE = 1.0f;
+    boolean AE_LOCK = false;
 }

@@ -113,6 +113,23 @@ public class PhotoMode extends CameraModeBase {
     }
 
     @Override
+    public void setFocusMode(boolean focusMode) {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            cameraView.setAutoFocus(focusMode);
+        }
+    }
+
+    @Override
+    public boolean getFocusMode() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            return cameraView.getAutoFocus();
+        }
+        return true;
+    }
+
+    @Override
     public void cameraPhotoOrVideoClick() {
         CameraView cameraView = getCameraView();
         if (cameraView!=null){

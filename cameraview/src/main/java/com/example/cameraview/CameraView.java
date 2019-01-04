@@ -23,7 +23,6 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.os.ParcelableCompat;
@@ -36,14 +35,13 @@ import android.widget.FrameLayout;
 
 import com.example.cameraview.utils.CameraUtils;
 import com.google.android.cameraview.AspectRatio;
+import com.google.android.cameraview.CallbackBridge;
 import com.google.android.cameraview.Camera1;
 import com.google.android.cameraview.CameraViewImpl;
 import com.google.android.cameraview.Constants;
 import com.google.android.cameraview.PreviewImpl;
 import com.google.android.cameraview.SurfaceViewPreview;
 import com.google.android.cameraview.TextureViewPreview;
-
-import java.util.ArrayList;
 import java.util.Set;
 
 public class CameraView extends FrameLayout {
@@ -76,7 +74,7 @@ public class CameraView extends FrameLayout {
         }
         // Internal setup
         preview = createPreviewImpl(context);
-        mCallbacks = new CallbackBridge();
+        mCallbacks = new CallbackBridge(this);
         //camera1/camera2自适应 change
         /*if (Build.VERSION.SDK_INT < 21) {
             mImpl = new Camera1(mCallbacks, preview);
@@ -101,6 +99,8 @@ public class CameraView extends FrameLayout {
         setFlash(a.getInt(R.styleable.CameraView_flash, Constants.FLASH_AUTO));
         //设置缩放
         setZoom(a.getFloat(R.styleable.CameraView_zoom, Constants.ZOOM_VALUE));
+        //设置缩放
+        setAELock(a.getBoolean(R.styleable.CameraView_zoom, Constants.AE_LOCK));
         a.recycle();
         // Display orientation detector
         mDisplayOrientationDetector = new DisplayOrientationDetector(context) {
@@ -258,20 +258,19 @@ public class CameraView extends FrameLayout {
     /**
      * Add a new callback.
      *
-     * @param callback The {@link Callback} to add.
-     * @see #removeCallback(Callback)
+     * @param callback The {@link CallbackBridge.Callback} to add.
      */
-    public void addCallback(@NonNull Callback callback) {
+    public void addCallback(@NonNull CallbackBridge.Callback callback) {
         mCallbacks.add(callback);
     }
 
     /**
      * Remove a callback.
      *
-     * @param callback The {@link Callback} to remove.
-     * @see #addCallback(Callback)
+     * @param callback The {@link CallbackBridge.Callback} to remove.
+     * @see #addCallback(CallbackBridge.Callback)
      */
-    public void removeCallback(@NonNull Callback callback) {
+    public void removeCallback(@NonNull CallbackBridge.Callback callback) {
         mCallbacks.remove(callback);
     }
 
@@ -325,6 +324,10 @@ public class CameraView extends FrameLayout {
         }
         return null;
     }
+    /**
+     * 获取Surface对象
+     * @return
+     */
     public Surface getSurface() {
         if (preview != null){
             return preview.getSurface();
@@ -453,60 +456,25 @@ public class CameraView extends FrameLayout {
     public float getZoom() {
         return mImpl.getZoom();
     }
-
+    /**
+     * 设置AE
+     * @param isLock
+     */
+    public void setAELock(boolean isLock) {
+        mImpl.setAELock(isLock);
+    }
+    /**
+     * get zoomValues
+     */
+    public boolean getAELock() {
+        return mImpl.getAELock();
+    }
     /**
      * Take a picture. The result will be returned to
-     * {@link Callback#onPictureTaken(CameraView, byte[])}.
+     * {@link CallbackBridge.Callback#onPictureTaken(CameraView, byte[])}.
      */
     public void takePicture() {
         mImpl.takePicture();
-    }
-
-    private class CallbackBridge implements CameraViewImpl.Callback {
-
-        private final ArrayList<Callback> mCallbacks = new ArrayList<>();
-
-        private boolean mRequestLayoutOnOpen;
-
-        CallbackBridge() {
-        }
-
-        public void add(Callback callback) {
-            mCallbacks.add(callback);
-        }
-
-        public void remove(Callback callback) {
-            mCallbacks.remove(callback);
-        }
-
-        @Override
-        public void onCameraOpened() {
-            if (mRequestLayoutOnOpen) {
-                mRequestLayoutOnOpen = false;
-                requestLayout();
-            }
-            for (Callback callback : mCallbacks) {
-                callback.onCameraOpened(CameraView.this);
-            }
-        }
-
-        @Override
-        public void onCameraClosed() {
-            for (Callback callback : mCallbacks) {
-                callback.onCameraClosed(CameraView.this);
-            }
-        }
-
-        @Override
-        public void onPictureTaken(byte[] data) {
-            for (Callback callback : mCallbacks) {
-                callback.onPictureTaken(CameraView.this, data);
-            }
-        }
-
-        public void reserveRequestLayoutOnOpen() {
-            mRequestLayoutOnOpen = true;
-        }
     }
 
     protected static class SavedState extends BaseSavedState {
@@ -555,36 +523,5 @@ public class CameraView extends FrameLayout {
 
     }
 
-    /**
-     * Callback for monitoring events about {@link CameraView}.
-     */
-    @SuppressWarnings("UnusedParameters")
-    public abstract static class Callback {
-
-        /**
-         * Called when camera is opened.
-         *
-         * @param cameraView The associated {@link CameraView}.
-         */
-        public void onCameraOpened(CameraView cameraView) {
-        }
-
-        /**
-         * Called when camera is closed.
-         *
-         * @param cameraView The associated {@link CameraView}.
-         */
-        public void onCameraClosed(CameraView cameraView) {
-        }
-
-        /**
-         * Called when a picture is taken.
-         *
-         * @param cameraView The associated {@link CameraView}.
-         * @param data       JPEG data.
-         */
-        public void onPictureTaken(CameraView cameraView, byte[] data) {
-        }
-    }
 
 }

@@ -202,6 +202,21 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
+    public void setFocusMode(boolean focusMode) {
+        if (mCameraManager != null){
+            mCameraManager.setFocusMode(focusMode);
+        }
+    }
+
+    @Override
+    public boolean getFocusMode() {
+        if (mCameraManager != null){
+            return mCameraManager.getFocusMode();
+        }
+        return false;
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case PermissionsManager.CAMERA_REQUEST_CODE:

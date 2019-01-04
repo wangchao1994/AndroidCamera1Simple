@@ -23,9 +23,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Build;
-import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -43,29 +41,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Camera1 extends CameraViewImpl{
 
     private int mCameraId;
-
     private final AtomicBoolean isPictureCaptureInProgress = new AtomicBoolean(false);
-
     private Camera mCamera;
-
     private Camera.Parameters mCameraParameters;
-
     private final Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
-
     private final SizeMap mPreviewSizes = new SizeMap();
-
     private final SizeMap mPictureSizes = new SizeMap();
-
     private AspectRatio mAspectRatio;
-
     private boolean mShowingPreview;
-
     private boolean mAutoFocus;
-
     private int mFacing;
-
     private int mFlash;
-
     private int mDisplayOrientation;
     private MediaRecorder mMediaRecorder;
     private Size size;
@@ -73,6 +59,7 @@ public class Camera1 extends CameraViewImpl{
     private final SizeMap mVideoSizes = new SizeMap();
     private Camera.Size optimalVideoSize;
     private float mZoomValues = Constants.ZOOM_VALUE;
+    private boolean isAELock;
 
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -98,7 +85,6 @@ public class Camera1 extends CameraViewImpl{
         mCamera.startPreview();
         return true;
     }
-
     @Override
     public void stop() {
         if (mCamera != null) {
@@ -107,9 +93,7 @@ public class Camera1 extends CameraViewImpl{
         mShowingPreview = false;
         releaseCamera();
     }
-
     // Suppresses Camera#setPreviewTexture
-    @SuppressLint("NewApi")
     private void setUpPreview() {
         try {
             if (mPreview.getOutputClass() == SurfaceHolder.class) {
@@ -128,12 +112,10 @@ public class Camera1 extends CameraViewImpl{
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public boolean isCameraOpened() {
         return mCamera != null;
     }
-
 
     @Override
     public void setFacing(int facing) {
@@ -324,10 +306,8 @@ public class Camera1 extends CameraViewImpl{
             sizes = mPreviewSizes.sizes(mAspectRatio);
         }
         size = chooseOptimalSize(sizes);
-
         //add adjustCameraParameters
         optimalVideoSize = CameraUtils.getOptimalVideoSize(mCameraParameters.getSupportedPictureSizes(), mCameraParameters.getSupportedPreviewSizes(), size.getWidth(), size.getHeight());
-
         // Always re-apply camera parameters
         // Largest picture size in this ratio
         final Size pictureSize = mPictureSizes.sizes(mAspectRatio).last();
@@ -337,6 +317,8 @@ public class Camera1 extends CameraViewImpl{
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,mDisplayOrientation));
+        int maxExposureCompensation = mCameraParameters.getMaxExposureCompensation();
+        Log.d("camera_log","maxExposureCompensation-----------------"+maxExposureCompensation);
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
         setZoomInternal(mZoomValues);
@@ -461,6 +443,33 @@ public class Camera1 extends CameraViewImpl{
     @Override
     public float getZoom() {
         return mZoomValues;
+    }
+
+    /**
+     * 设置AE_LOCK
+     * @param isLock
+     */
+    @Override
+    public void setAELock(boolean isLock) {
+        if (isAELock == isLock){
+            return;
+        }
+        if (setAEInternal(isAELock)){
+            mCamera.setParameters(mCameraParameters);
+        }
+    }
+
+    private boolean setAEInternal(boolean aeLock) {
+        isAELock = aeLock;
+        if (isCameraOpened()) {
+            mCameraParameters.setAutoExposureLock(aeLock);
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public boolean getAELock() {
+        return isAELock;
     }
 
     //录像 start------------------------------------------------------

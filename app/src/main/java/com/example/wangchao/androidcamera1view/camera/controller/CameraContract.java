@@ -19,13 +19,15 @@ public interface CameraContract {
         void switchCameraMode(int currentMode);
         void stopRecord();
         void restartRecord();
-        int getCameraMode();
+        int  getCameraMode();
         void setCurrentAspectRatio(AspectRatio aspectRatio);
         void setViewShowOrHide(View view,boolean isShow);
         void setRecentlyPhotoPath(String recentlyPhotoPath);
         void onReleaseRecord();
         void setZoom(float zoomValues);
         float getZoom();
+        void setFocusMode(boolean focusMode);
+        boolean getFocusMode();
     }
 
     interface CameraViewCall<T extends Presenter> {
@@ -37,7 +39,7 @@ public interface CameraContract {
          */
         void loadPictureResult(String filePath);
         /**
-         * 显示计时时间
+         * 显示录像计时时间
          * @param timing
          */
         void setTimeShow(String timing);

@@ -54,7 +54,8 @@
             -->
             <enum name="redEye" value="4"/>
         </attr>
-        <!-- Aspect ratio of camera preview and pictures. -->
+        <!-- Aspect zoom of camera preview and pictures. -->
         <attr name="zoom" format="string"/>
+        <attr name="autoExposureLock" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -2,6 +2,7 @@ package com.example.wangchao.androidcamera1view.camera.controller;
 
 import com.example.cameraview.CameraView;
 import com.google.android.cameraview.AspectRatio;
+import com.google.android.cameraview.CallbackBridge;
 
 import java.lang.ref.WeakReference;
 import java.util.Set;
@@ -67,6 +68,12 @@ public abstract class CameraModeBase {
     public abstract void setZoomValues(float zoomValues);
     public abstract float getZoomValues();
     /**
+     * Focus
+     * @param isAutoFocusMode
+     */
+    public abstract void setFocusMode(boolean isAutoFocusMode);
+    public abstract boolean getFocusMode();
+    /**
      *点击拍照Or录像事件
      */
     public abstract void cameraPhotoOrVideoClick();
@@ -78,7 +85,7 @@ public abstract class CameraModeBase {
      * @param data
      */
     protected abstract void writePictureData(byte[] data);
-    protected  CameraView.Callback mPictureCallback = new CameraView.Callback() {
+    protected  CallbackBridge.Callback mPictureCallback = new CallbackBridge.Callback() {
         @Override
         public void onCameraOpened(CameraView cameraView) {
             super.onCameraOpened(cameraView);

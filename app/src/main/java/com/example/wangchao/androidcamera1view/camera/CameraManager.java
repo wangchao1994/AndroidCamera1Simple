@@ -201,4 +201,15 @@ public class CameraManager {
     public float getZoomValues(){
         return mCurrentMode.getZoomValues();
     }
+
+    /**
+     * 设置对焦模式
+     * @param isAutoFocus
+     */
+    public void setFocusMode(boolean isAutoFocus){
+        mCurrentMode.setFocusMode(isAutoFocus);
+    }
+    public boolean getFocusMode(){
+        return mCurrentMode.getFocusMode();
+    }
 }
