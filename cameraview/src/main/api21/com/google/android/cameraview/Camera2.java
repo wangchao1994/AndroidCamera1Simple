@@ -274,6 +274,16 @@ public class Camera2 extends CameraViewImpl {
     public float getZoom() {
         return 1.0f;
     }
+
+    @Override
+    public void setAELock(boolean isLock) {
+
+    }
+
+    @Override
+    public boolean getAELock() {
+        return false;
+    }
     /*camera interface add end ---------------------------*/
 
     @Override
