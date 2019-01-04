@@ -126,7 +126,7 @@ public class VideoMode extends CameraModeBase {
      * @param isFinishing
      */
     private void stopRecordingVideo(final boolean isFinishing) {
-        CameraView cameraView = getCameraView();
+        final CameraView cameraView = getCameraView();
         if (cameraView == null) return;
         cameraView.stopRecording();
         if (isFinishing){
