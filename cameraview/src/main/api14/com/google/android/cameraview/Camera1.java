@@ -496,6 +496,7 @@ public class Camera1 extends CameraViewImpl{
     }
 
     //录像 start------------------------------------------------------
+
     @Override
     public void startRecording() {
         new MediaPrepareTask().execute(null, null, null);
@@ -530,10 +531,6 @@ public class Camera1 extends CameraViewImpl{
     private boolean prepareVideoRecorder() {
         if (mCamera == null) return false;
         mMediaRecorder = new MediaRecorder();
-        View currentView = mPreview.getCurrentView();
-        if (currentView != null){
-            currentView.setKeepScreenOn(true);
-        }
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
@@ -578,6 +575,15 @@ public class Camera1 extends CameraViewImpl{
         @Override
         protected void onPostExecute(Boolean result) {
             Log.d("onPostExecute","result---------------->"+result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            //surfaceView TextureView
+            View currentView = mPreview.getCurrentView();
+            if (currentView != null){
+                currentView.setKeepScreenOn(true);
+            }
         }
     }
 
