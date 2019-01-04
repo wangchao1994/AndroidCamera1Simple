@@ -52,6 +52,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     private TextView mCamerViewTvShowTime;
     private ImageView mViewRecordController;
     private ImageView mCameraViewZoom;
+
     private final int[] FLASH_OPTIONS = {
             CameraView.FLASH_AUTO,
             CameraView.FLASH_OFF,
@@ -187,6 +188,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                     mCameraPresenter.setViewShowOrHide(mCameraAspectRadio,false);
                     mCameraPresenter.setViewShowOrHide(mCameraFlashAuto,false);
                     mCameraPresenter.setViewShowOrHide(mCameraIdSwitch,false);
+                    mCameraPresenter.setViewShowOrHide(mCameraViewZoom,false);
                 }
                 break;
             //录制暂停
@@ -203,6 +205,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                     mCameraPresenter.setViewShowOrHide(mCameraAspectRadio,true);
                     mCameraPresenter.setViewShowOrHide(mCameraFlashAuto,true);
                     mCameraPresenter.setViewShowOrHide(mCameraIdSwitch,true);
+                    mCameraPresenter.setViewShowOrHide(mCameraViewZoom,true);
                 }
                 break;
             default:

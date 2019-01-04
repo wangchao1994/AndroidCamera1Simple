@@ -17,6 +17,7 @@
 package com.example.cameraview;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -57,6 +58,7 @@ abstract class DisplayOrientationDetector {
                     return;
                 }
                 final int rotation = mDisplay.getRotation();
+                Log.d("chooseOptimalSize","onOrientationChanged---------------="+rotation);
                 if (mLastKnownRotation != rotation) {
                     mLastKnownRotation = rotation;
                     dispatchOnDisplayOrientationChanged(DISPLAY_ORIENTATIONS.get(rotation));

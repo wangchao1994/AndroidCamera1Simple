@@ -8,7 +8,12 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
+
+import com.google.android.cameraview.AspectRatio;
+import com.google.android.cameraview.Constants;
+import com.google.android.cameraview.SizeMap;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,10 +24,106 @@ import java.util.Locale;
 public class CameraUtils {
 
     private static final String TAG = CameraUtils.class.getSimpleName();
-    public static final String MIMETYPE_EXTENSION_NULL = "unknown_ext_null_mimeType";
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
+    private static final String MIMETYPE_EXTENSION_NULL = "unknown_ext_null_mimeType";
 
+    private static final int INVALID_CAMERA_ID = -1;
+
+    public static final SparseArrayCompat<String> FLASH_MODES = new SparseArrayCompat<>();
+
+    static {
+        FLASH_MODES.put(Constants.FLASH_OFF, Camera.Parameters.FLASH_MODE_OFF);
+        FLASH_MODES.put(Constants.FLASH_ON, Camera.Parameters.FLASH_MODE_ON);
+        FLASH_MODES.put(Constants.FLASH_TORCH, Camera.Parameters.FLASH_MODE_TORCH);
+        FLASH_MODES.put(Constants.FLASH_AUTO, Camera.Parameters.FLASH_MODE_AUTO);
+        FLASH_MODES.put(Constants.FLASH_RED_EYE, Camera.Parameters.FLASH_MODE_RED_EYE);
+    }
+
+    /**
+     * Calculate display orientation
+     * https://developer.android.com/reference/android/hardware/Camera.html#setDisplayOrientation(int)
+     *
+     * This calculation is used for orienting the preview
+     *
+     * Note: This is not the same calculation as the camera rotation
+     *
+     * @param screenOrientationDegrees Screen orientation in degrees
+     * @return Number of degrees required to rotate preview
+     */
+    public static int calcDisplayOrientation(Camera.CameraInfo mCameraInfo,int screenOrientationDegrees) {
+        if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            return (360 - (mCameraInfo.orientation + screenOrientationDegrees) % 360) % 360;
+        } else {  // back-facing
+            return (mCameraInfo.orientation - screenOrientationDegrees + 360) % 360;
+        }
+    }
+
+    /**
+     * Calculate camera rotation
+     *
+     * This calculation is applied to the output JPEG either via Exif Orientation tag
+     * or by actually transforming the bitmap. (Determined by vendor camera API implementation)
+     *
+     * Note: This is not the same calculation as the display orientation
+     *
+     * @param screenOrientationDegrees Screen orientation in degrees
+     * @return Number of degrees to rotate image in order for it to view correctly.
+     */
+    public static int calcCameraRotation(Camera.CameraInfo mCameraInfo ,int screenOrientationDegrees) {
+        if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            return (mCameraInfo.orientation + screenOrientationDegrees) % 360;
+        } else {  // back-facing
+            final int landscapeFlip = isLandscape(screenOrientationDegrees) ? 180 : 0;
+            return (mCameraInfo.orientation + screenOrientationDegrees + landscapeFlip) % 360;
+        }
+    }
+
+    /**
+     * Test if the supplied orientation is in landscape.
+     *
+     * @param orientationDegrees Orientation in degrees (0,90,180,270)
+     * @return True if in landscape, false if portrait
+     */
+    public static boolean isLandscape(int orientationDegrees) {
+        return (orientationDegrees == Constants.LANDSCAPE_90 ||
+                orientationDegrees == Constants.LANDSCAPE_270);
+    }
+
+    /**
+     * This rewrites cameraId.
+     */
+    public static int chooseCamera(Camera.CameraInfo mCameraInfo, int mFacing) {
+        for (int i = 0, count = Camera.getNumberOfCameras(); i < count; i++) {
+            Camera.getCameraInfo(i, mCameraInfo);
+            if (mCameraInfo.facing == mFacing) {
+                return i;
+            }
+        }
+        return INVALID_CAMERA_ID;
+    }
+
+    /**
+     * select aspectration
+     * @param mPreviewSizes
+     * @return
+     */
+    public static AspectRatio chooseAspectRatio(SizeMap mPreviewSizes) {
+        AspectRatio r = null;
+        for (AspectRatio ratio : mPreviewSizes.ratios()) {
+            r = ratio;
+            if (ratio.equals(Constants.DEFAULT_ASPECT_RATIO)) {
+                return ratio;
+            }
+        }
+        return r;
+    }
+    /**
+     * getSupportedVideoSizes
+     * @param supportedVideoSizes
+     * @param previewSizes
+     * @param w
+     * @param h
+     * @return
+     */
     public static Camera.Size getOptimalVideoSize(List<Camera.Size> supportedVideoSizes,
                                                   List<Camera.Size> previewSizes, int w, int h) {
         // Use a very small tolerance because we want an exact match.
@@ -70,47 +171,6 @@ public class CameraUtils {
             }
         }
         return optimalSize;
-    }
-
-    /**
-     * Creates a media file in the {@code Environment.DIRECTORY_PICTURES} directory. The directory
-     * is persistent and available to other applications like gallery.
-     *
-     * @param type Media type. Can be video or image.
-     * @return A file object pointing to the newly created file.
-     */
-    public static File getOutputMediaFile(int type){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
-            return  null;
-        }
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "CameraSample");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()) {
-                Log.d("CameraSample", "failed to create directory");
-                return null;
-            }
-        }
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
     }
     /**
      * 通知图库更新图片

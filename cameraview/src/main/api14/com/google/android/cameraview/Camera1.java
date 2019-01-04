@@ -42,23 +42,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @SuppressWarnings("deprecation")
 public class Camera1 extends CameraViewImpl{
 
-    private static final int INVALID_CAMERA_ID = -1;
-
-    private static final SparseArrayCompat<String> FLASH_MODES = new SparseArrayCompat<>();
-
-    static {
-        FLASH_MODES.put(Constants.FLASH_OFF, Camera.Parameters.FLASH_MODE_OFF);
-        FLASH_MODES.put(Constants.FLASH_ON, Camera.Parameters.FLASH_MODE_ON);
-        FLASH_MODES.put(Constants.FLASH_TORCH, Camera.Parameters.FLASH_MODE_TORCH);
-        FLASH_MODES.put(Constants.FLASH_AUTO, Camera.Parameters.FLASH_MODE_AUTO);
-        FLASH_MODES.put(Constants.FLASH_RED_EYE, Camera.Parameters.FLASH_MODE_RED_EYE);
-    }
-
     private int mCameraId;
 
     private final AtomicBoolean isPictureCaptureInProgress = new AtomicBoolean(false);
 
-    Camera mCamera;
+    private Camera mCamera;
 
     private Camera.Parameters mCameraParameters;
 
@@ -101,11 +89,10 @@ public class Camera1 extends CameraViewImpl{
 
     @Override
     public boolean start() {
-        chooseCamera();
+        mCameraId = CameraUtils.chooseCamera(mCameraInfo,mFacing);
         openCamera();
         if (mPreview.isReady()) {
             setUpPreview();
-
         }
         mShowingPreview = true;
         mCamera.startPreview();
@@ -123,7 +110,7 @@ public class Camera1 extends CameraViewImpl{
 
     // Suppresses Camera#setPreviewTexture
     @SuppressLint("NewApi")
-    public void setUpPreview() {
+    private void setUpPreview() {
         try {
             if (mPreview.getOutputClass() == SurfaceHolder.class) {
                 final boolean needsToStopPreview = mShowingPreview && Build.VERSION.SDK_INT < 14;
@@ -147,17 +134,6 @@ public class Camera1 extends CameraViewImpl{
         return mCamera != null;
     }
 
-    /**
-     * 返回当前Camera
-     * @return
-     */
-    @Override
-    public Camera getCurrentCamera() {
-        if (mCamera != null){
-            return mCamera;
-        }
-        return null;
-    }
 
     @Override
     public void setFacing(int facing) {
@@ -239,7 +215,6 @@ public class Camera1 extends CameraViewImpl{
             mCamera.setParameters(mCameraParameters);
         }
     }
-
     @Override
     public int getFlash() {
         return mFlash;
@@ -264,7 +239,7 @@ public class Camera1 extends CameraViewImpl{
         }
     }
 
-    public void takePictureInternal() {
+    private void takePictureInternal() {
         if (!isPictureCaptureInProgress.getAndSet(true)) {
             mCamera.takePicture(null, null, null, new Camera.PictureCallback() {
                 @Override
@@ -285,35 +260,22 @@ public class Camera1 extends CameraViewImpl{
         }
         mDisplayOrientation = displayOrientation;
         if (isCameraOpened()) {
-            mCameraParameters.setRotation(calcCameraRotation(displayOrientation));
+            mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,displayOrientation));
             mCamera.setParameters(mCameraParameters);
             final boolean needsToStopPreview = mShowingPreview && Build.VERSION.SDK_INT < 14;
             if (needsToStopPreview) {
                 mCamera.stopPreview();
             }
-            mCamera.setDisplayOrientation(calcDisplayOrientation(displayOrientation));
+            mCamera.setDisplayOrientation(CameraUtils.calcDisplayOrientation(mCameraInfo,displayOrientation));
             if (needsToStopPreview) {
                 mCamera.startPreview();
             }
         }
     }
 
-
-
     /**
-     * This rewrites {@link #mCameraId} and {@link #mCameraInfo}.
+     * 打开Camera
      */
-    private void chooseCamera() {
-        for (int i = 0, count = Camera.getNumberOfCameras(); i < count; i++) {
-            Camera.getCameraInfo(i, mCameraInfo);
-            if (mCameraInfo.facing == mFacing) {
-                mCameraId = i;
-                return;
-            }
-        }
-        mCameraId = INVALID_CAMERA_ID;
-    }
-
     private void openCamera() {
         if (mCamera != null) {
             releaseCamera();
@@ -342,34 +304,27 @@ public class Camera1 extends CameraViewImpl{
         }
         //最大缩放值
         int maxZoom = mCameraParameters.getMaxZoom();
-        Log.d("onResume","maxZoom---------------->size="+maxZoom);
+        Log.d("prepareVideoRecorder","getMaxZoom---------------->size="+maxZoom);
         // AspectRatio
         if (mAspectRatio == null) {
             mAspectRatio = Constants.DEFAULT_ASPECT_RATIO;
         }
         adjustCameraParameters();
-        mCamera.setDisplayOrientation(calcDisplayOrientation(mDisplayOrientation));
+        mCamera.setDisplayOrientation(CameraUtils.calcDisplayOrientation(mCameraInfo,mDisplayOrientation));
         mCallback.onCameraOpened();
     }
 
-    private AspectRatio chooseAspectRatio() {
-        AspectRatio r = null;
-        for (AspectRatio ratio : mPreviewSizes.ratios()) {
-            r = ratio;
-            if (ratio.equals(Constants.DEFAULT_ASPECT_RATIO)) {
-                return ratio;
-            }
-        }
-        return r;
-    }
-
-    void adjustCameraParameters() {
+    /**
+     * 参数设置
+     */
+    private void adjustCameraParameters() {
         SortedSet<Size> sizes = mPreviewSizes.sizes(mAspectRatio);
         if (sizes == null) { // Not supported
-            mAspectRatio = chooseAspectRatio();
+            mAspectRatio = CameraUtils.chooseAspectRatio(mPreviewSizes);
             sizes = mPreviewSizes.sizes(mAspectRatio);
         }
         size = chooseOptimalSize(sizes);
+
         //add adjustCameraParameters
         optimalVideoSize = CameraUtils.getOptimalVideoSize(mCameraParameters.getSupportedPictureSizes(), mCameraParameters.getSupportedPreviewSizes(), size.getWidth(), size.getHeight());
 
@@ -381,7 +336,7 @@ public class Camera1 extends CameraViewImpl{
         }
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
-        mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
+        mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,mDisplayOrientation));
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
         setZoomInternal(mZoomValues);
@@ -400,7 +355,7 @@ public class Camera1 extends CameraViewImpl{
         int desiredHeight;
         final int surfaceWidth = mPreview.getWidth();
         final int surfaceHeight = mPreview.getHeight();
-        if (isLandscape(mDisplayOrientation)) {
+        if (CameraUtils.isLandscape(mDisplayOrientation)) {
             desiredWidth = surfaceHeight;
             desiredHeight = surfaceWidth;
         } else {
@@ -425,57 +380,6 @@ public class Camera1 extends CameraViewImpl{
             mCallback.onCameraClosed();
         }
     }
-
-    /**
-     * Calculate display orientation
-     * https://developer.android.com/reference/android/hardware/Camera.html#setDisplayOrientation(int)
-     *
-     * This calculation is used for orienting the preview
-     *
-     * Note: This is not the same calculation as the camera rotation
-     *
-     * @param screenOrientationDegrees Screen orientation in degrees
-     * @return Number of degrees required to rotate preview
-     */
-    private int calcDisplayOrientation(int screenOrientationDegrees) {
-        if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            return (360 - (mCameraInfo.orientation + screenOrientationDegrees) % 360) % 360;
-        } else {  // back-facing
-            return (mCameraInfo.orientation - screenOrientationDegrees + 360) % 360;
-        }
-    }
-
-    /**
-     * Calculate camera rotation
-     *
-     * This calculation is applied to the output JPEG either via Exif Orientation tag
-     * or by actually transforming the bitmap. (Determined by vendor camera API implementation)
-     *
-     * Note: This is not the same calculation as the display orientation
-     *
-     * @param screenOrientationDegrees Screen orientation in degrees
-     * @return Number of degrees to rotate image in order for it to view correctly.
-     */
-    private int calcCameraRotation(int screenOrientationDegrees) {
-        if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            return (mCameraInfo.orientation + screenOrientationDegrees) % 360;
-        } else {  // back-facing
-            final int landscapeFlip = isLandscape(screenOrientationDegrees) ? 180 : 0;
-            return (mCameraInfo.orientation + screenOrientationDegrees + landscapeFlip) % 360;
-        }
-    }
-
-    /**
-     * Test if the supplied orientation is in landscape.
-     *
-     * @param orientationDegrees Orientation in degrees (0,90,180,270)
-     * @return True if in landscape, false if portrait
-     */
-    private boolean isLandscape(int orientationDegrees) {
-        return (orientationDegrees == Constants.LANDSCAPE_90 ||
-                orientationDegrees == Constants.LANDSCAPE_270);
-    }
-
     /**
      * @return {@code true} if {@link #mCameraParameters} was modified.
      */
@@ -504,13 +408,13 @@ public class Camera1 extends CameraViewImpl{
     private boolean setFlashInternal(int flash) {
         if (isCameraOpened()) {
             List<String> modes = mCameraParameters.getSupportedFlashModes();
-            String mode = FLASH_MODES.get(flash);
+            String mode = CameraUtils.FLASH_MODES.get(flash);
             if (modes != null && modes.contains(mode)) {
                 mCameraParameters.setFlashMode(mode);
                 mFlash = flash;
                 return true;
             }
-            String currentMode = FLASH_MODES.get(mFlash);
+            String currentMode =CameraUtils.FLASH_MODES.get(mFlash);
             if (modes == null || !modes.contains(currentMode)) {
                 mCameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                 mFlash = Constants.FLASH_OFF;
@@ -522,7 +426,17 @@ public class Camera1 extends CameraViewImpl{
             return false;
         }
     }
-
+    /**
+     * 返回当前Camera
+     * @return
+     */
+    @Override
+    public Camera getCurrentCamera() {
+        if (mCamera != null){
+            return mCamera;
+        }
+        return null;
+    }
     /**
      * 设置缩放值
      * @param zoomValues
@@ -548,7 +462,8 @@ public class Camera1 extends CameraViewImpl{
     public float getZoom() {
         return mZoomValues;
     }
-//录像 start------------------------------------------------------
+
+    //录像 start------------------------------------------------------
     @Override
     public void startRecording() {
         if (prepareVideoRecorder()) {
@@ -606,7 +521,6 @@ public class Camera1 extends CameraViewImpl{
         int rotateDegree = getRotateDegree(getView().getContext());
         Log.d("prepareVideoRecorder","rotateDegree=============="+rotateDegree);
         mMediaRecorder.setOrientationHint(rotateDegree);
-
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
@@ -632,7 +546,6 @@ public class Camera1 extends CameraViewImpl{
             mCamera.lock();
         }
     }
-
     /**
      * 获取旋转角度
      * @param context
