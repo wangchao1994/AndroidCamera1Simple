@@ -8,14 +8,18 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.IntDef;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.Constants;
+import com.google.android.cameraview.PreviewImpl;
 import com.google.android.cameraview.SizeMap;
 
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +41,41 @@ public class CameraUtils {
         FLASH_MODES.put(Constants.FLASH_AUTO, Camera.Parameters.FLASH_MODE_AUTO);
         FLASH_MODES.put(Constants.FLASH_RED_EYE, Camera.Parameters.FLASH_MODE_RED_EYE);
     }
+
+    /**-----------cameraview----------------------------*/
+    /** The camera device faces the opposite direction as the device's screen. */
+    public static final int FACING_BACK = Constants.FACING_BACK;
+
+    /** The camera device faces the same direction as the device's screen. */
+    public static final int FACING_FRONT = Constants.FACING_FRONT;
+
+
+    /** Direction the camera faces relative to device screen. */
+    @IntDef({FACING_BACK, FACING_FRONT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Facing {
+    }
+
+    /** Flash will not be fired. */
+    public static final int FLASH_OFF = Constants.FLASH_OFF;
+
+    /** Flash will always be fired during snapshot. */
+    public static final int FLASH_ON = Constants.FLASH_ON;
+
+    /** Constant emission of light during preview, auto-focus and snapshot. */
+    public static final int FLASH_TORCH = Constants.FLASH_TORCH;
+
+    /** Flash will be fired automatically when required. */
+    public static final int FLASH_AUTO = Constants.FLASH_AUTO;
+
+    /** Flash will be fired in red-eye reduction mode. */
+    public static final int FLASH_RED_EYE = Constants.FLASH_RED_EYE;
+
+    /** The mode for for the camera device's flash control */
+    @IntDef({FLASH_OFF, FLASH_ON, FLASH_TORCH, FLASH_AUTO, FLASH_RED_EYE})
+    public @interface Flash {
+    }
+    /**-----------cameraview----------------------------*/
 
     /**
      * Calculate display orientation

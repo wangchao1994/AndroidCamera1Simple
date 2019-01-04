@@ -54,9 +54,9 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     private ImageView mCameraViewZoom;
 
     private final int[] FLASH_OPTIONS = {
-            CameraView.FLASH_AUTO,
-            CameraView.FLASH_OFF,
-            CameraView.FLASH_ON,
+            CameraUtils.FLASH_AUTO,
+            CameraUtils.FLASH_OFF,
+            CameraUtils.FLASH_ON,
     };
 
     private final int[] FLASH_ICONS = {
@@ -247,7 +247,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                     //获取当前Id
                     int cameraFacingId = mCameraManager.getCameraFacingId();
                     Log.d("wangchao_camera","isCameraBack------------------------ 1 "+cameraFacingId);
-                    mCameraPresenter.switchCameraId(cameraFacingId == CameraView.FACING_FRONT ?CameraView.FACING_BACK : CameraView.FACING_FRONT);
+                    mCameraPresenter.switchCameraId(cameraFacingId == CameraUtils.FACING_FRONT ?CameraUtils.FACING_BACK : CameraUtils.FACING_FRONT);
                 }
                 break;
             case R.id.iv_aspect_switch:

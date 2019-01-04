@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.cameraview.CameraView;
+import com.example.cameraview.utils.CameraUtils;
 import com.google.android.cameraview.AspectRatio;
 
 import java.io.File;
@@ -44,9 +45,9 @@ public class DemoActivity extends AppCompatActivity  implements
     private static final String FRAGMENT_DIALOG = "dialog";
 
     private static final int[] FLASH_OPTIONS = {
-            CameraView.FLASH_AUTO,
-            CameraView.FLASH_OFF,
-            CameraView.FLASH_ON,
+            CameraUtils.FLASH_AUTO,
+            CameraUtils.FLASH_OFF,
+            CameraUtils.FLASH_ON,
     };
 
     private static final int[] FLASH_ICONS = {
@@ -186,8 +187,8 @@ public class DemoActivity extends AppCompatActivity  implements
             case R.id.switch_camera:
                 if (mCameraView != null) {
                     int facing = mCameraView.getFacing();
-                    mCameraView.setFacing(facing == CameraView.FACING_FRONT ?
-                            CameraView.FACING_BACK : CameraView.FACING_FRONT);
+                    mCameraView.setFacing(facing == CameraUtils.FACING_FRONT ?
+                            CameraUtils.FACING_BACK : CameraUtils.FACING_FRONT);
                 }
                 return true;
         }

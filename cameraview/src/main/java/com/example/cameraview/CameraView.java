@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
+import com.example.cameraview.utils.CameraUtils;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.Camera1;
 import com.google.android.cameraview.CameraViewImpl;
@@ -42,46 +43,13 @@ import com.google.android.cameraview.PreviewImpl;
 import com.google.android.cameraview.SurfaceViewPreview;
 import com.google.android.cameraview.TextureViewPreview;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Set;
 
 public class CameraView extends FrameLayout {
 
-    /** The camera device faces the opposite direction as the device's screen. */
-    public static final int FACING_BACK = Constants.FACING_BACK;
 
-    /** The camera device faces the same direction as the device's screen. */
-    public static final int FACING_FRONT = Constants.FACING_FRONT;
     private PreviewImpl preview;
-
-    /** Direction the camera faces relative to device screen. */
-    @IntDef({FACING_BACK, FACING_FRONT})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Facing {
-    }
-
-    /** Flash will not be fired. */
-    public static final int FLASH_OFF = Constants.FLASH_OFF;
-
-    /** Flash will always be fired during snapshot. */
-    public static final int FLASH_ON = Constants.FLASH_ON;
-
-    /** Constant emission of light during preview, auto-focus and snapshot. */
-    public static final int FLASH_TORCH = Constants.FLASH_TORCH;
-
-    /** Flash will be fired automatically when required. */
-    public static final int FLASH_AUTO = Constants.FLASH_AUTO;
-
-    /** Flash will be fired in red-eye reduction mode. */
-    public static final int FLASH_RED_EYE = Constants.FLASH_RED_EYE;
-
-    /** The mode for for the camera device's flash control */
-    @IntDef({FLASH_OFF, FLASH_ON, FLASH_TORCH, FLASH_AUTO, FLASH_RED_EYE})
-    public @interface Flash {
-    }
-
     CameraViewImpl mImpl;
 
     private final CallbackBridge mCallbacks;
@@ -122,7 +90,7 @@ public class CameraView extends FrameLayout {
         // Attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,R.style.Widget_CameraView);
         mAdjustViewBounds = a.getBoolean(R.styleable.CameraView_android_adjustViewBounds, false);
-        setFacing(a.getInt(R.styleable.CameraView_facing, FACING_BACK));
+        setFacing(a.getInt(R.styleable.CameraView_facing, CameraUtils.FACING_BACK));
         String aspectRatio = a.getString(R.styleable.CameraView_aspectRatio);
         if (aspectRatio != null) {
             setAspectRatio(AspectRatio.parse(aspectRatio));
@@ -330,11 +298,9 @@ public class CameraView extends FrameLayout {
 
     /**
      * Chooses camera by the direction it faces.
-     *
-     * @param facing The camera facing. Must be either {@link #FACING_BACK} or
-     *               {@link #FACING_FRONT}.
+     * @param facing The camera facing.
      */
-    public void setFacing(@Facing int facing) {
+    public void setFacing(@CameraUtils.Facing int facing) {
         mImpl.setFacing(facing);
     }
 
@@ -343,13 +309,12 @@ public class CameraView extends FrameLayout {
      *
      * @return The camera facing.
      */
-    @Facing
+    @CameraUtils.Facing
     public int getFacing() {
         //noinspection WrongConstant
         return mImpl.getFacing();
     }
-//add camera1-----------------
-
+    //add camera1-----------------
     /**
      * 获取当前Camera对象
      * @return
@@ -461,16 +426,15 @@ public class CameraView extends FrameLayout {
      *
      * @param flash The desired flash mode.
      */
-    public void setFlash(@Flash int flash) {
+    public void setFlash(@CameraUtils.Flash int flash) {
         mImpl.setFlash(flash);
     }
-
     /**
      * Gets the current flash mode.
      *
      * @return The current flash mode.
      */
-    @Flash
+    @CameraUtils.Flash
     public int getFlash() {
         //noinspection WrongConstant
         return mImpl.getFlash();
@@ -546,17 +510,12 @@ public class CameraView extends FrameLayout {
     }
 
     protected static class SavedState extends BaseSavedState {
-
-        @Facing
-        int facing;
-
-        AspectRatio ratio;
-
-        boolean autoFocus;
-
-        @Flash
-        int flash;
-
+        @CameraUtils.Facing
+        private int facing;
+        private AspectRatio ratio;
+        private boolean autoFocus;
+        @CameraUtils.Flash
+        private int flash;
         @SuppressWarnings("WrongConstant")
         public SavedState(Parcel source, ClassLoader loader) {
             super(source);
