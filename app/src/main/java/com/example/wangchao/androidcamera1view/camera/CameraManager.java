@@ -187,4 +187,7 @@ public class CameraManager {
         }
         return mPhotoPath;
     }
+    public void onReleaseRecord(){
+        ((VideoMode) mVideoMode).onReleaseMediaRecord();
+    }
 }

@@ -239,4 +239,15 @@ public class VideoMode extends CameraModeBase {
     public RotateProgress getRotateProgress(){
         return mRotateProgress;
     }
+
+    /**
+     * 释MediaRecorder
+     */
+    public void onReleaseMediaRecord(){
+        CameraView cameraView = getCameraView();
+        Log.d("wangchao_camera","cameraView.isRecording()====="+cameraView.isRecording());
+        if (cameraView != null && cameraView.isRecording()){
+            stopRecordingVideo(true);
+        }
+    }
 }

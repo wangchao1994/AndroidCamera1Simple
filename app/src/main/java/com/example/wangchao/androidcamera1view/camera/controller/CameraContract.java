@@ -23,6 +23,7 @@ public interface CameraContract {
         void setCurrentAspectRatio(AspectRatio aspectRatio);
         void setViewShowOrHide(View view,boolean isShow);
         void setRecentlyPhotoPath(String recentlyPhotoPath);
+        void onReleaseRecord();
     }
 
     interface CameraViewCall<T extends Presenter> {

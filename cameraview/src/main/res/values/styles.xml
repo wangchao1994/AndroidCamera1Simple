@@ -12,7 +12,7 @@
     limitations under the License.
 -->
 <resources>
-
+<!--cameraView 相关默认值设置-->
     <style name="Widget.CameraView" parent="android:Widget">
         <item name="android:adjustViewBounds">false</item>
         <item name="facing">back</item>

@@ -27,7 +27,7 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.CameraPictureOrVideoResultCallBack,CameraModeBase.CameraVideoRecordCallBack{
-
+    private static final String TAG = CameraManager.class.getSimpleName();
     private CameraContract.CameraViewCall mCameraView;
     private ICameraImpl mICameraImp;
     private CameraManager mCameraManager;
@@ -109,7 +109,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
                     public void call(Long aLong) {
                         time += 1000;
                         String time_show = TimingUtils.getDate(time);
-                        Log.d("camera_log","startRecord---------="+time_show);
+                        Log.d(TAG,"startRecord---------="+time_show);
                         mCameraView.setTimeShow(time_show);
                     }
                 });
@@ -169,12 +169,22 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
 
     @Override
     public void setRecentlyPhotoPath(String recentlyPhotoPath) {
-        Log.d("recentlyPhotoPath","recentlyPhotoPath----->"+recentlyPhotoPath);
+        Log.d(TAG,"recentlyPhotoPath----->"+recentlyPhotoPath);
         ImageView cameraThumbView = mCameraView.getCameraThumbView();
         if (cameraThumbView != null){
             //Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(mICameraImp.getActivity().getContentResolver(), Long.parseLong(recentlyPhotoId), MediaStore.Images.Thumbnails.MICRO_KIND, new BitmapFactory.Options());
             //cameraThumbView.setImageBitmap(bitmap);
             GlideLoader.loadNetWorkResource(BaseApplication.getInstance(),recentlyPhotoPath,cameraThumbView);
+        }
+    }
+
+    /**
+     * 释放录像
+     */
+    @Override
+    public void onReleaseRecord() {
+        if (mCameraManager != null){
+            mCameraManager.onReleaseRecord();
         }
     }
 

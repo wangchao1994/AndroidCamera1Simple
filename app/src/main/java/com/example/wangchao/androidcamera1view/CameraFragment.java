@@ -125,8 +125,9 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("wangchao_camera","onPause----------------------------->");
         if (mCameraPresenter != null){
+            //释MediaRecorder
+            mCameraPresenter.onReleaseRecord();
             mCameraPresenter.onPause();
         }
     }
