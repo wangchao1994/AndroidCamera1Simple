@@ -79,10 +79,12 @@ public abstract class CameraViewImpl {
         void onPictureTaken(byte[] data);
 
     }
-    public abstract Camera getCurrentCamera();
 
+    public abstract Camera getCurrentCamera();
     public abstract void startRecording();
     public abstract void stopRecording();
     public abstract boolean isRecording();
     public abstract String getNextVideoPath();
+    public abstract void setZoom(float zoomValues);
+    public abstract float getZoom();
 }

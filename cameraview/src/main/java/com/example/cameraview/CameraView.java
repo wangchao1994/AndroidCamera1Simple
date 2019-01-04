@@ -19,7 +19,6 @@ package com.example.cameraview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Parcel;
@@ -33,13 +32,10 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
 
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.Camera1;
-import com.google.android.cameraview.Camera2;
-import com.google.android.cameraview.Camera2Api23;
 import com.google.android.cameraview.CameraViewImpl;
 import com.google.android.cameraview.Constants;
 import com.google.android.cameraview.PreviewImpl;
@@ -124,8 +120,7 @@ public class CameraView extends FrameLayout {
         }*/
         mImpl = new Camera1(mCallbacks, preview);
         // Attributes
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,
-                R.style.Widget_CameraView);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,R.style.Widget_CameraView);
         mAdjustViewBounds = a.getBoolean(R.styleable.CameraView_android_adjustViewBounds, false);
         setFacing(a.getInt(R.styleable.CameraView_facing, FACING_BACK));
         String aspectRatio = a.getString(R.styleable.CameraView_aspectRatio);
@@ -136,6 +131,8 @@ public class CameraView extends FrameLayout {
         }
         setAutoFocus(a.getBoolean(R.styleable.CameraView_autoFocus, true));
         setFlash(a.getInt(R.styleable.CameraView_flash, Constants.FLASH_AUTO));
+        //设置缩放
+        setZoom(a.getFloat(R.styleable.CameraView_zoom, Constants.ZOOM_VALUE));
         a.recycle();
         // Display orientation detector
         mDisplayOrientationDetector = new DisplayOrientationDetector(context) {
@@ -145,6 +142,7 @@ public class CameraView extends FrameLayout {
             }
         };
     }
+
 
     @NonNull
     private PreviewImpl createPreviewImpl(Context context) {
@@ -476,6 +474,20 @@ public class CameraView extends FrameLayout {
     public int getFlash() {
         //noinspection WrongConstant
         return mImpl.getFlash();
+    }
+
+    /**
+     * 设置zoom缩放
+     * @param aFloat
+     */
+    public void setZoom(float aFloat) {
+        mImpl.setZoom(aFloat);
+    }
+    /**
+     * get zoomValues
+     */
+    public float getZoom() {
+        return mImpl.getZoom();
     }
 
     /**

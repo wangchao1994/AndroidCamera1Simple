@@ -264,6 +264,16 @@ public class Camera2 extends CameraViewImpl {
     public String getNextVideoPath() {
         return null;
     }
+
+    @Override
+    public void setZoom(float zoomValues) {
+
+    }
+
+    @Override
+    public float getZoom() {
+        return 1.0f;
+    }
     /*camera interface add end ---------------------------*/
 
     @Override

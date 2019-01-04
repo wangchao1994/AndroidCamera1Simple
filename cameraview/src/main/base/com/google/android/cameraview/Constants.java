@@ -32,4 +32,6 @@ public interface Constants {
 
     int LANDSCAPE_90 = 90;
     int LANDSCAPE_270 = 270;
+
+    float ZOOM_VALUE = 1.0f;
 }

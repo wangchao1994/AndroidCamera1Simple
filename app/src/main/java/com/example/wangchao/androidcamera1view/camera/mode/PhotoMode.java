@@ -96,6 +96,23 @@ public class PhotoMode extends CameraModeBase {
     }
 
     @Override
+    public void setZoomValues(float zoomValues) {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            cameraView.setZoom(zoomValues);
+        }
+    }
+
+    @Override
+    public float getZoomValues() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            return cameraView.getZoom();
+        }
+        return 1.0f;
+    }
+
+    @Override
     public void cameraPhotoOrVideoClick() {
         CameraView cameraView = getCameraView();
         if (cameraView!=null){

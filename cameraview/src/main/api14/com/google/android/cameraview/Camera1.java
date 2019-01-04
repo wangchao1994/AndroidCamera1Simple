@@ -40,7 +40,7 @@ import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("deprecation")
-public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecordCallBack{
+public class Camera1 extends CameraViewImpl{
 
     private static final int INVALID_CAMERA_ID = -1;
 
@@ -84,7 +84,7 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
     private String mNextVideoAbsolutePath;
     private final SizeMap mVideoSizes = new SizeMap();
     private Camera.Size optimalVideoSize;
-
+    private float mZoomValues = Constants.ZOOM_VALUE;
 
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -340,6 +340,9 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
         for (int i = 0; i < supportedFlashModes.size(); i++) {
             Log.d("prepareVideoRecorder","supportedFlashModes===="+supportedFlashModes.get(i));
         }
+        //最大缩放值
+        int maxZoom = mCameraParameters.getMaxZoom();
+        Log.d("onResume","maxZoom---------------->size="+maxZoom);
         // AspectRatio
         if (mAspectRatio == null) {
             mAspectRatio = Constants.DEFAULT_ASPECT_RATIO;
@@ -379,9 +382,9 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
-        //mCameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
+        setZoomInternal(mZoomValues);
         mCamera.setParameters(mCameraParameters);
         if (mShowingPreview) {
             mCamera.startPreview();
@@ -520,6 +523,31 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
         }
     }
 
+    /**
+     * 设置缩放值
+     * @param zoomValues
+     */
+    @Override
+    public void setZoom(float zoomValues) {
+        if (mZoomValues == zoomValues){
+            return;
+        }
+        if (setZoomInternal(zoomValues)){
+            mCamera.setParameters(mCameraParameters);
+        }
+    }
+    private boolean setZoomInternal(float zoomValues) {
+        mZoomValues = zoomValues;
+        if (isCameraOpened()) {
+            mCameraParameters.setZoom((int) zoomValues);
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public float getZoom() {
+        return mZoomValues;
+    }
 //录像 start------------------------------------------------------
     @Override
     public void startRecording() {
@@ -552,7 +580,6 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
         }
         return null;
     }
-
     /**
      * 参数设置
      * @return
@@ -634,11 +661,6 @@ public class Camera1 extends CameraViewImpl implements PreviewImpl.ReleaseRecord
             result = (mCameraInfo.orientation - phoneDegree +360) % 360;
         }
         return result;
-    }
-
-    @Override
-    public void onReleaseRecord() {
-        Log.d("wangchao","onReleaseRecord---------------------------------->");
     }
 //录像 end------------------------------------------------------
 }

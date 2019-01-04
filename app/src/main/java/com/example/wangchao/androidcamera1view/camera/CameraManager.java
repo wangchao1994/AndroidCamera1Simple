@@ -190,4 +190,15 @@ public class CameraManager {
     public void onReleaseRecord(){
         ((VideoMode) mVideoMode).onReleaseMediaRecord();
     }
+
+    /**
+     * 设置缩放比例
+     * @param zoomValues
+     */
+    public void setZoomValues(float zoomValues){
+        mCurrentMode.setZoomValues(zoomValues);
+    }
+    public float getZoomValues(){
+        return mCurrentMode.getZoomValues();
+    }
 }

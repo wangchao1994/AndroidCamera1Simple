@@ -51,6 +51,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     private String mFilePath;
     private TextView mCamerViewTvShowTime;
     private ImageView mViewRecordController;
+    private ImageView mCameraViewZoom;
     private final int[] FLASH_OPTIONS = {
             CameraView.FLASH_AUTO,
             CameraView.FLASH_OFF,
@@ -98,6 +99,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         mCameraAspectRadio = mRootCameraView.findViewById(R.id.iv_aspect_switch);
         mCameraViewThumb = mRootCameraView.findViewById(R.id.iv_last_thumb);
         mCamerViewTvShowTime = mRootCameraView.findViewById(R.id.tv_show_time_view);
+        mCameraViewZoom = mRootCameraView.findViewById(R.id.iv_add_zoom);
         mViewRecordController = mRootCameraView.findViewById(R.id.iv_video_controller);
         //录制状态标志
         mViewRecordController.setTag(CameraContract.CameraViewCall.MODE_RECORD_FINISH);
@@ -108,6 +110,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         mCameraIdSwitch.setOnClickListener(this);
         mCameraAspectRadio.setOnClickListener(this);
         mCameraViewThumb.setOnClickListener(this);
+        mCameraViewZoom.setOnClickListener(this);
     }
 
     @Override
@@ -282,6 +285,15 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 if (mFilePath != null){
                     CameraUtils.OnIntentGallery(BaseApplication.getInstance(),mFilePath);
                 }
+                break;
+            case R.id.iv_add_zoom:
+                float zoomValues = mCameraPresenter.getZoom();
+                if (zoomValues == 10.0f){
+                    zoomValues = 0.0f;
+                }
+                zoomValues += 1.0f;
+                Log.d("onResume","zoomValues-------------->"+zoomValues);
+                mCameraPresenter.setZoom(zoomValues);
                 break;
             case R.id.iv_video_controller:
                 int mode = (int) mViewRecordController.getTag();

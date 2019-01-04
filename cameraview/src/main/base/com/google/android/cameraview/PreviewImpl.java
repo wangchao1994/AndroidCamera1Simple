@@ -76,14 +76,6 @@ public abstract class PreviewImpl {
     public int getHeight() {
         return mHeight;
     }
-
     public abstract View getCurrentView();
-    protected ReleaseRecordCallBack mReleaseRecordCallBack;
-    public void setReleaseRecordCallBack(ReleaseRecordCallBack releaseRecordCallBack){
-        mReleaseRecordCallBack = releaseRecordCallBack;
-    }
-    public interface ReleaseRecordCallBack{
-        void onReleaseRecord();
-    }
 
 }

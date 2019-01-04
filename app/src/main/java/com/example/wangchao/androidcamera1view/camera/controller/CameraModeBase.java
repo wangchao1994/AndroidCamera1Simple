@@ -61,6 +61,12 @@ public abstract class CameraModeBase {
     public abstract void setCurrentAspectRatio(AspectRatio aspectRatio);
 
     /**
+     * ZOOM
+     * @param zoomValues
+     */
+    public abstract void setZoomValues(float zoomValues);
+    public abstract float getZoomValues();
+    /**
      *点击拍照Or录像事件
      */
     public abstract void cameraPhotoOrVideoClick();
@@ -106,7 +112,6 @@ public abstract class CameraModeBase {
     public void setCameraVideoResultCallBack(CameraVideoRecordCallBack cameraVideoResultCallBack) {
         mCameraVideoResultCallBack = cameraVideoResultCallBack;
     }
-
     /**
      *录像事件
      */

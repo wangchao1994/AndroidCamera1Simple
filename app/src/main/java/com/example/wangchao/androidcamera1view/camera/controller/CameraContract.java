@@ -24,6 +24,8 @@ public interface CameraContract {
         void setViewShowOrHide(View view,boolean isShow);
         void setRecentlyPhotoPath(String recentlyPhotoPath);
         void onReleaseRecord();
+        void setZoom(float zoomValues);
+        float getZoom();
     }
 
     interface CameraViewCall<T extends Presenter> {

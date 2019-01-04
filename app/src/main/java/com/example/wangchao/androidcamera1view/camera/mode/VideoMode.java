@@ -101,6 +101,23 @@ public class VideoMode extends CameraModeBase {
     }
 
     @Override
+    public void setZoomValues(float zoomValues) {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            cameraView.setZoom(zoomValues);
+        }
+    }
+
+    @Override
+    public float getZoomValues() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            return cameraView.getZoom();
+        }
+        return 1.0f;
+    }
+
+    @Override
     public void addCameraPictureCallBack() {
         CameraView cameraView = getCameraView();
         if (cameraView != null) {
@@ -227,7 +244,6 @@ public class VideoMode extends CameraModeBase {
         if (getCameraView() != null ){
             getCameraView().startRecording();
             if (mCameraVideoResultCallBack != null) {
-                //UI TIME SHOW
                 mCameraVideoResultCallBack.startRecord();
             }
         }

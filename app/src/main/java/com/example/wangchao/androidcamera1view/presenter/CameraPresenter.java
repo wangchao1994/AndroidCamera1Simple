@@ -172,8 +172,6 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
         Log.d(TAG,"recentlyPhotoPath----->"+recentlyPhotoPath);
         ImageView cameraThumbView = mCameraView.getCameraThumbView();
         if (cameraThumbView != null){
-            //Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(mICameraImp.getActivity().getContentResolver(), Long.parseLong(recentlyPhotoId), MediaStore.Images.Thumbnails.MICRO_KIND, new BitmapFactory.Options());
-            //cameraThumbView.setImageBitmap(bitmap);
             GlideLoader.loadNetWorkResource(BaseApplication.getInstance(),recentlyPhotoPath,cameraThumbView);
         }
     }
@@ -186,6 +184,21 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
         if (mCameraManager != null){
             mCameraManager.onReleaseRecord();
         }
+    }
+
+    @Override
+    public void setZoom(float zoomValues) {
+        if (mCameraManager != null){
+            mCameraManager.setZoomValues(zoomValues);
+        }
+    }
+
+    @Override
+    public float getZoom() {
+        if (mCameraManager != null){
+            return mCameraManager.getZoomValues();
+        }
+        return 1.0f;
     }
 
     @Override
