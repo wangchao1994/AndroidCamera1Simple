@@ -2,6 +2,7 @@ package com.example.wangchao.androidcamera1view.presenter;
 
 import android.content.pm.PackageManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -202,6 +203,14 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
+    public float getMaxZoom() {
+        if (mCameraManager != null){
+            return mCameraManager.getSupportMaxZoomValues();
+        }
+        return 1.0f;
+    }
+
+    @Override
     public void setFocusMode(boolean focusMode) {
         if (mCameraManager != null){
             mCameraManager.setFocusMode(focusMode);
@@ -214,6 +223,13 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
             return mCameraManager.getFocusMode();
         }
         return false;
+    }
+
+    @Override
+    public void focusOnTouch(MotionEvent event, int viewWidth, int viewHeight) {
+        if (mCameraManager != null){
+            mCameraManager.setFocusOnTouchEvent(event,viewWidth,viewHeight);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.wangchao.androidcamera1view.camera.controller;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -26,8 +27,10 @@ public interface CameraContract {
         void onReleaseRecord();
         void setZoom(float zoomValues);
         float getZoom();
+        float getMaxZoom();
         void setFocusMode(boolean focusMode);
         boolean getFocusMode();
+        void focusOnTouch(MotionEvent event, int viewWidth, int viewHeight);
     }
 
     interface CameraViewCall<T extends Presenter> {

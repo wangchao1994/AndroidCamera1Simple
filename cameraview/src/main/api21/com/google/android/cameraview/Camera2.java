@@ -266,6 +266,11 @@ public class Camera2 extends CameraViewImpl {
     }
 
     @Override
+    public int getMaxZoom() {
+        return 0;
+    }
+
+    @Override
     public void setZoom(float zoomValues) {
 
     }
@@ -282,6 +287,11 @@ public class Camera2 extends CameraViewImpl {
 
     @Override
     public boolean getAELock() {
+        return false;
+    }
+
+    @Override
+    public boolean isFocusAreaSupported() {
         return false;
     }
     /*camera interface add end ---------------------------*/

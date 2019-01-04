@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,7 +31,7 @@ import com.google.android.cameraview.AspectRatio;
 /**
  * Main CameraView
  */
-public class CameraFragment extends Fragment implements CameraContract.CameraViewCall ,View.OnClickListener{
+public class CameraFragment extends Fragment implements CameraContract.CameraViewCall ,View.OnClickListener,CameraView.OnGestureListener{
 
     public static final String TAG = CameraFragment.class.getSimpleName();
 
@@ -65,6 +66,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     };
     private AlertDialog aAspectRatioAlertDialog;
     private int mAspectRatioItem;
+    private float mSupportMaxZoom;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -92,6 +94,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
 
     private void initView(View mRootCameraView) {
         mCameraView = mRootCameraView.findViewById(R.id.camera_view);
+        mCameraView.setOnGestureListener(this);
         mBtnTakePicture = mRootCameraView.findViewById(R.id.fb_take_picture);
         mBtnVideoRecord = mRootCameraView.findViewById(R.id.fb_video_recording);
         mCameraFlashAuto = mRootCameraView.findViewById(R.id.iv_flash_switch);
@@ -124,6 +127,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
             mCameraPresenter.onResume();
             mCameraPresenter.setPictureCallBack();
             mCameraPresenter.setRecentlyPhotoPath(mCameraManager.getRecentlyPhotoPath(BaseApplication.getInstance()));
+            mSupportMaxZoom = mCameraPresenter.getMaxZoom();
         }
     }
 
@@ -292,7 +296,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 break;
             case R.id.iv_add_zoom:
                 float zoomValues = mCameraPresenter.getZoom();
-                if (zoomValues == 10.0f){
+                if (zoomValues == mSupportMaxZoom){
                     zoomValues = 0.0f;
                 }
                 zoomValues += 1.0f;
@@ -317,5 +321,57 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 }
                 break;
         }
+    }
+
+
+    @Override
+    public boolean onSingleTap(MotionEvent e) {
+        if (null == mCameraView) {
+            return false;
+        }
+        //获取当前聚焦模式
+        boolean focusMode = mCameraPresenter.getFocusMode();
+        boolean supportFocusArea = mCameraManager.isSupportFocusArea();
+        Log.d("onSingleTap--->","---------------supportFocusArea-----------"+supportFocusArea);
+        return false;
+    }
+
+    @Override
+    public void onScale(float factor) {
+        Log.d("onScale--->","----------------------mSupportMaxZoom----"+mSupportMaxZoom);
+        if (mCameraPresenter != null){
+            float zoomValues = mCameraPresenter.getZoom();
+            if (factor >= 1.0f){
+                if (zoomValues >=1.0f){
+                    zoomValues += 0.1f;
+                    if (zoomValues >mSupportMaxZoom){
+                        zoomValues = mSupportMaxZoom;
+                    }
+                }
+            }else{
+                if (zoomValues >1.0f){
+                    zoomValues -= 0.1f;
+                    if (zoomValues < 1.0f){
+                        zoomValues = 1.0f;
+                    }
+                }
+            }
+            mCameraPresenter.setZoom(zoomValues);
+        }
+    }
+
+    @Override
+    public void showPress() {
+        Log.d("onScale--->","---------showPress-----------------");
+    }
+
+    @Override
+    public void onLongPress() {
+        Log.d("onScale--->","--------------onLongPress------------");
+    }
+
+    @Override
+    public void onActionUp() {
+        Log.d("onScale--->","--------------onActionUp------------");
     }
 }

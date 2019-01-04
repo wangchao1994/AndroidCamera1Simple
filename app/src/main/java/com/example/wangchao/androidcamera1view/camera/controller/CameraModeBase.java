@@ -67,12 +67,14 @@ public abstract class CameraModeBase {
      */
     public abstract void setZoomValues(float zoomValues);
     public abstract float getZoomValues();
+    public abstract float getMaxZoomValues();
     /**
      * Focus
      * @param isAutoFocusMode
      */
     public abstract void setFocusMode(boolean isAutoFocusMode);
     public abstract boolean getFocusMode();
+    public abstract boolean isFocusAreaSupported();
     /**
      *点击拍照Or录像事件
      */

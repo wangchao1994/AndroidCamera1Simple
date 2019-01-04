@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
+
 import com.example.cameraview.CameraView;
 import com.example.cameraview.utils.file.FileUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
@@ -195,11 +197,15 @@ public class CameraManager {
      * 设置缩放比例
      * @param zoomValues
      */
+
     public void setZoomValues(float zoomValues){
         mCurrentMode.setZoomValues(zoomValues);
     }
     public float getZoomValues(){
         return mCurrentMode.getZoomValues();
+    }
+    public float getSupportMaxZoomValues(){
+        return mCurrentMode.getMaxZoomValues();
     }
 
     /**
@@ -211,5 +217,24 @@ public class CameraManager {
     }
     public boolean getFocusMode(){
         return mCurrentMode.getFocusMode();
+    }
+
+    public boolean isSupportFocusArea(){
+        return mCurrentMode.isFocusAreaSupported();
+    }
+    /**
+     * 点击对焦
+     * @param event
+     * @param viewWidth
+     * @param viewHeight
+     */
+    public void setFocusOnTouchEvent(MotionEvent event, int viewWidth, int viewHeight){
+
+    }
+
+    private int clamp(int x, int min, int max) {
+        if (x > max) return max;
+        if (x < min) return min;
+        return x;
     }
 }

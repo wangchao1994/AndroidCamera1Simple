@@ -118,6 +118,15 @@ public class VideoMode extends CameraModeBase {
     }
 
     @Override
+    public float getMaxZoomValues() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            return cameraView.getMaxZoom();
+        }
+        return 1.0f;
+    }
+
+    @Override
     public void setFocusMode(boolean focusMode) {
         CameraView cameraView = getCameraView();
         if (cameraView != null){
@@ -132,6 +141,15 @@ public class VideoMode extends CameraModeBase {
             return cameraView.getAutoFocus();
         }
         return true;
+    }
+
+    @Override
+    public boolean isFocusAreaSupported() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            return cameraView.isFocusAreaSupported();
+        }
+        return false;
     }
 
     @Override

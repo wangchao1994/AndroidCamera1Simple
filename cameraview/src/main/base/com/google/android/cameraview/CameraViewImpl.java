@@ -85,8 +85,11 @@ public abstract class CameraViewImpl {
     public abstract void stopRecording();
     public abstract boolean isRecording();
     public abstract String getNextVideoPath();
+    public abstract int getMaxZoom();
     public abstract void setZoom(float zoomValues);
     public abstract float getZoom();
     public abstract void setAELock(boolean isLock);
     public abstract boolean getAELock();
+    public abstract boolean isFocusAreaSupported();
+
 }

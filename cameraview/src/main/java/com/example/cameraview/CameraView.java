@@ -30,6 +30,9 @@ import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
@@ -46,20 +49,18 @@ import java.util.Set;
 
 public class CameraView extends FrameLayout {
 
-
     private PreviewImpl preview;
-    CameraViewImpl mImpl;
-
+    private CameraViewImpl mImpl;
     private final CallbackBridge mCallbacks;
-
     private boolean mAdjustViewBounds;
-
     private final DisplayOrientationDetector mDisplayOrientationDetector;
+    private OnGestureListener mOuterGestureLsn;
+    private ScaleGestureDetector mScaleGestureDector;
+    private GestureDetector mGestureDector;
 
     public CameraView(Context context) {
         this(context, null);
     }
-
     public CameraView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -85,6 +86,7 @@ public class CameraView extends FrameLayout {
             mImpl = new Camera2Api23(mCallbacks, preview, context);
         }*/
         mImpl = new Camera1(mCallbacks, preview);
+        initGestEvent(context);
         // Attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,R.style.Widget_CameraView);
         mAdjustViewBounds = a.getBoolean(R.styleable.CameraView_android_adjustViewBounds, false);
@@ -110,7 +112,6 @@ public class CameraView extends FrameLayout {
             }
         };
     }
-
 
     @NonNull
     private PreviewImpl createPreviewImpl(Context context) {
@@ -444,6 +445,16 @@ public class CameraView extends FrameLayout {
     }
 
     /**
+     * FocusAreaSupported
+     * @return
+     */
+    public boolean isFocusAreaSupported(){
+        return mImpl.isFocusAreaSupported();
+    }
+    public int getMaxZoom(){
+        return mImpl.getMaxZoom();
+    }
+    /**
      * 设置zoom缩放
      * @param aFloat
      */
@@ -464,7 +475,7 @@ public class CameraView extends FrameLayout {
         mImpl.setAELock(isLock);
     }
     /**
-     * get zoomValues
+     * get AELock
      */
     public boolean getAELock() {
         return mImpl.getAELock();
@@ -523,5 +534,91 @@ public class CameraView extends FrameLayout {
 
     }
 
+/***Cameraview ui 事件监听-----------------------------------------**/
+    private void initGestEvent(Context context) {
+        mGestureDector = new GestureDetector(context, mGestureLsn);
+        mScaleGestureDector = new ScaleGestureDetector(context, mScaleGestureLsn);
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mGestureDector.onTouchEvent(event) || mScaleGestureDector.onTouchEvent(event)) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (null != mOuterGestureLsn) {
+                    mOuterGestureLsn.onActionUp();
+                }
+            }
+            return true;
+        }
+        if (event.getPointerCount() > 1) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+    public void setOnGestureListener(OnGestureListener listener) {
+        mOuterGestureLsn = listener;
+    }
+
+    GestureDetector.OnGestureListener mGestureLsn = new GestureDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            if (null != mOuterGestureLsn) {
+                mOuterGestureLsn.showPress();
+            }
+        }
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            if (null != mOuterGestureLsn) {
+                mOuterGestureLsn.onSingleTap(e);
+            }
+            return false;
+        }
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (null != mOuterGestureLsn) {
+                mOuterGestureLsn.onLongPress();
+            }
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
+        }
+    };
+
+    ScaleGestureDetector.OnScaleGestureListener mScaleGestureLsn = new ScaleGestureDetector.OnScaleGestureListener() {
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            if (null != mOuterGestureLsn) {
+                mOuterGestureLsn.onScale(detector.getScaleFactor());
+            }
+            return true;
+        }
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            return true;
+        }
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+        }
+    };
+
+    public interface OnGestureListener {
+        boolean onSingleTap(MotionEvent e);
+        void onScale(float factor);
+        void showPress();
+        void onLongPress();
+        void onActionUp();
+    }
+    /***Cameraview ui 事件监听-----------------------------------------**/
 
 }

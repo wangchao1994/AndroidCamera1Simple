@@ -23,6 +23,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
@@ -60,6 +61,8 @@ public class Camera1 extends CameraViewImpl{
     private Camera.Size optimalVideoSize;
     private float mZoomValues = Constants.ZOOM_VALUE;
     private boolean isAELock;
+    private int maxZoom;
+    private boolean mFocusAreaSupported;
 
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -317,8 +320,10 @@ public class Camera1 extends CameraViewImpl{
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,mDisplayOrientation));
-        int maxExposureCompensation = mCameraParameters.getMaxExposureCompensation();
-        Log.d("camera_log","maxExposureCompensation-----------------"+maxExposureCompensation);
+        //是否支持聚焦Area
+        mFocusAreaSupported = (mCameraParameters.getMaxNumFocusAreas() > 0 && CameraUtils.isSupported(Camera.Parameters.FOCUS_MODE_AUTO, mCameraParameters.getSupportedFocusModes()));
+        Log.d("camera_log","mFocusAreaSupported-----------mFocusAreaSupported------"+mFocusAreaSupported);
+        maxZoom = mCameraParameters.getMaxZoom();
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
         setZoomInternal(mZoomValues);
@@ -327,6 +332,7 @@ public class Camera1 extends CameraViewImpl{
             mCamera.startPreview();
         }
     }
+
 
     @SuppressWarnings("SuspiciousNameCombination")
     private Size chooseOptimalSize(SortedSet<Size> sizes) {
@@ -419,6 +425,23 @@ public class Camera1 extends CameraViewImpl{
         }
         return null;
     }
+
+    /**
+     * 是否支持FocusArea
+     * @return
+     */
+    @Override
+    public boolean isFocusAreaSupported(){
+        return mFocusAreaSupported;
+    }
+    /**
+     * 获取支持最大的Zoom值
+     * @return
+     */
+    @Override
+    public int getMaxZoom(){
+        return maxZoom;
+    }
     /**
      * 设置缩放值
      * @param zoomValues
@@ -475,11 +498,7 @@ public class Camera1 extends CameraViewImpl{
     //录像 start------------------------------------------------------
     @Override
     public void startRecording() {
-        if (prepareVideoRecorder()) {
-            mMediaRecorder.start();
-        } else {
-            releaseMediaRecorder();
-        }
+        new MediaPrepareTask().execute(null, null, null);
     }
 
     @Override
@@ -542,6 +561,24 @@ public class Camera1 extends CameraViewImpl{
             return false;
         }
         return true;
+    }
+
+    private class MediaPrepareTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (prepareVideoRecorder()) {
+                mMediaRecorder.start();
+            } else {
+                releaseMediaRecorder();
+                return false;
+            }
+            return true;
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            Log.d("onPostExecute","result---------------->"+result);
+        }
     }
 
     /**

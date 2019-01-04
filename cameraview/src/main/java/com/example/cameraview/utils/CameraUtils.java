@@ -155,6 +155,16 @@ public class CameraUtils {
         }
         return r;
     }
+
+    /**
+     * supported area
+     * @param value
+     * @param supported
+     * @return
+     */
+    public static boolean isSupported(String value, List<String> supported) {
+        return supported == null ? false : supported.indexOf(value) >= 0;
+    }
     /**
      * getSupportedVideoSizes
      * @param supportedVideoSizes
