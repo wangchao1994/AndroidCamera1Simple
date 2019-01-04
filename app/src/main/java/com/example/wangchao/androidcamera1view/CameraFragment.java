@@ -113,6 +113,8 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     @Override
     public void onResume() {
         super.onResume();
+        //获取上一次文件路径
+        mFilePath = mCameraManager.getRecentlyPhotoPath(BaseApplication.getInstance());
         if (mCameraPresenter != null){
             mCameraPresenter.onResume();
             mCameraPresenter.setPictureCallBack();
@@ -123,6 +125,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("wangchao_camera","onPause----------------------------->");
         if (mCameraPresenter != null){
             mCameraPresenter.onPause();
         }
@@ -274,6 +277,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
 
                 break;
             case R.id.iv_last_thumb:
+                Log.d("camera_log","last FilePath--------------->mFilePath="+mFilePath);
                 if (mFilePath != null){
                     CameraUtils.OnIntentGallery(BaseApplication.getInstance(),mFilePath);
                 }
