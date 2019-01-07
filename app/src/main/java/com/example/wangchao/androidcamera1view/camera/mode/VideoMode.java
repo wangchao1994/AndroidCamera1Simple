@@ -248,7 +248,7 @@ public class VideoMode extends CameraModeBase {
 
     }
     /**
-     * 暂停后又从新恢复录制，合并多个视频文件
+     * 暂停后又重新恢复录制，合并多个视频文件
      */
     private void mergeMultipleFile() {
         Log.i(TAG, " mergeMultipleFile  start--->：file.size()= " + oldVideoPath.size());
@@ -284,7 +284,7 @@ public class VideoMode extends CameraModeBase {
         }
     }
     /**
-     * 返回RotateProgress
+     * 返回保存RotateProgress
      * @return
      */
     public RotateProgress getRotateProgress(){
