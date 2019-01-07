@@ -30,7 +30,7 @@ public interface CameraContract {
         float getMaxZoom();
         void setFocusMode(boolean focusMode);
         boolean getFocusMode();
-        void focusOnTouch(MotionEvent event, int viewWidth, int viewHeight);
+        void focusOnTouch(MotionEvent event);
     }
 
     interface CameraViewCall<T extends Presenter> {

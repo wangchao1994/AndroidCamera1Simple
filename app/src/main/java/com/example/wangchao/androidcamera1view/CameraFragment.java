@@ -3,6 +3,7 @@ package com.example.wangchao.androidcamera1view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -323,16 +324,13 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
         }
     }
 
-
     @Override
-    public boolean onSingleTap(MotionEvent e) {
+    public boolean onSingleTap(MotionEvent event) {
         if (null == mCameraView) {
             return false;
         }
-        //获取当前聚焦模式
-        boolean focusMode = mCameraPresenter.getFocusMode();
-        boolean supportFocusArea = mCameraManager.isSupportFocusArea();
-        Log.d("onSingleTap--->","---------------supportFocusArea-----------"+supportFocusArea);
+        mCameraPresenter.focusOnTouch(event);
+        Log.d("onSingleTap--->","---------------mCameraView.getWidth()="+mCameraView.getWidth()+"   mCameraView.getHeight()="+mCameraView.getHeight());
         return false;
     }
 

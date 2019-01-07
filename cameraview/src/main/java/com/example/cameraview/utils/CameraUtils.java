@@ -1,9 +1,12 @@
 package com.example.cameraview.utils;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Environment;
@@ -11,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.IntDef;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
+import android.view.Surface;
 
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.Constants;
@@ -155,7 +159,66 @@ public class CameraUtils {
         }
         return r;
     }
+    /**
+     * 获取旋转角度
+     * @param context
+     * @return
+     */
+    public static int getRotateDegree(Context context, int mCameraId, Camera.CameraInfo mCameraInfo){
+        int phoneDegree = 0;
+        int result = 0;
+        //获得手机方向
+        Activity activity = (Activity) context;
+        int phoneRotate =activity.getWindowManager().getDefaultDisplay().getOrientation();
+        //得到手机的角度
+        switch (phoneRotate) {
+            case Surface.ROTATION_0: phoneDegree = 0; break;        //0
+            case Surface.ROTATION_90: phoneDegree = 90; break;      //90
+            case Surface.ROTATION_180: phoneDegree = 180; break;    //180
+            case Surface.ROTATION_270: phoneDegree = 270; break;    //270
+        }
+        //分别计算前后置摄像头需要旋转的角度
+        if(mCameraId == 1){
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_FRONT, mCameraInfo);
+            result = (mCameraInfo.orientation + phoneDegree) % 360;
+            result = (360 - result) % 360;
+        }else{
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, mCameraInfo);
+            result = (mCameraInfo.orientation - phoneDegree +360) % 360;
+        }
+        return result;
+    }
+    /**
+     * 计算对焦区域
+     * @param x
+     * @param y
+     * @param coefficient
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Rect calculateTapArea(float x, float y, float coefficient, int width, int height) {
+        float focusAreaSize = 300;
+        int areaSize = Float.valueOf(focusAreaSize * coefficient).intValue();
+        int centerX = (int) (x / width * 2000 - 1000);
+        int centerY = (int) (y / height * 2000 - 1000);
 
+        int halfAreaSize = areaSize / 2;
+        RectF rectF = new RectF(clamp(centerX - halfAreaSize, -1000, 1000)
+                , clamp(centerY - halfAreaSize, -1000, 1000)
+                , clamp(centerX + halfAreaSize, -1000, 1000)
+                , clamp(centerY + halfAreaSize, -1000, 1000));
+        return new Rect(Math.round(rectF.left), Math.round(rectF.top), Math.round(rectF.right), Math.round(rectF.bottom));
+    }
+    private static int clamp(int x, int min, int max) {
+        if (x > max) {
+            return max;
+        }
+        if (x < min) {
+            return min;
+        }
+        return x;
+    }
     /**
      * supported area
      * @param value

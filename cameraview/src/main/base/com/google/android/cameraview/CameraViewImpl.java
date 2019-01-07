@@ -16,7 +16,9 @@
 
 package com.google.android.cameraview;
 
+import android.graphics.Point;
 import android.hardware.Camera;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Set;
@@ -79,17 +81,19 @@ public abstract class CameraViewImpl {
         void onPictureTaken(byte[] data);
 
     }
-
-    public abstract Camera getCurrentCamera();
-    public abstract void startRecording();
-    public abstract void stopRecording();
-    public abstract boolean isRecording();
-    public abstract String getNextVideoPath();
     public abstract int getMaxZoom();
     public abstract void setZoom(float zoomValues);
     public abstract float getZoom();
     public abstract void setAELock(boolean isLock);
     public abstract boolean getAELock();
-    public abstract boolean isFocusAreaSupported();
+    public abstract Camera getCurrentCamera();
+    public abstract void startRecording();
+    public abstract void stopRecording();
+    public abstract boolean isRecording();
+    public abstract String getNextVideoPath();
+    public abstract void setFocusArea(Point point);
+    public abstract boolean isZoomSupported();
+    public abstract void handleFocus(MotionEvent event);
+
 
 }

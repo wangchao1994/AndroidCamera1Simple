@@ -19,6 +19,7 @@ package com.example.cameraview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Parcel;
@@ -444,13 +445,6 @@ public class CameraView extends FrameLayout {
         return mImpl.getFlash();
     }
 
-    /**
-     * FocusAreaSupported
-     * @return
-     */
-    public boolean isFocusAreaSupported(){
-        return mImpl.isFocusAreaSupported();
-    }
     public int getMaxZoom(){
         return mImpl.getMaxZoom();
     }
@@ -479,6 +473,12 @@ public class CameraView extends FrameLayout {
      */
     public boolean getAELock() {
         return mImpl.getAELock();
+    }
+    /**
+     * set Focus Point
+     */
+    public void setFocusArea(Point point){
+        mImpl.setFocusArea(point);
     }
     /**
      * Take a picture. The result will be returned to
@@ -534,16 +534,26 @@ public class CameraView extends FrameLayout {
 
     }
 
-/***Cameraview ui 事件监听-----------------------------------------**/
+    //缩放对焦事件监听---------------------------------------------------------------------
+    /**
+     * 设置对焦和测光亮度
+     * @param event
+     */
+    public void handleFocus(MotionEvent event){
+        mImpl.handleFocus(event);
+    }
+
     private void initGestEvent(Context context) {
         mGestureDector = new GestureDetector(context, mGestureLsn);
         mScaleGestureDector = new ScaleGestureDetector(context, mScaleGestureLsn);
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mGestureDector.onTouchEvent(event) || mScaleGestureDector.onTouchEvent(event)) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (null != mOuterGestureLsn) {
+                Log.d("singleTap","mImpl.isZoomSupported()==="+mImpl.isZoomSupported());
+                if (null != mOuterGestureLsn && mImpl.isZoomSupported()) {
                     mOuterGestureLsn.onActionUp();
                 }
             }
@@ -557,7 +567,7 @@ public class CameraView extends FrameLayout {
     public void setOnGestureListener(OnGestureListener listener) {
         mOuterGestureLsn = listener;
     }
-
+    //focus
     GestureDetector.OnGestureListener mGestureLsn = new GestureDetector.OnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
@@ -581,6 +591,7 @@ public class CameraView extends FrameLayout {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             return false;
         }
+
         @Override
         public void onLongPress(MotionEvent e) {
             if (null != mOuterGestureLsn) {
@@ -593,7 +604,7 @@ public class CameraView extends FrameLayout {
             return false;
         }
     };
-
+    //zoom
     ScaleGestureDetector.OnScaleGestureListener mScaleGestureLsn = new ScaleGestureDetector.OnScaleGestureListener() {
 
         @Override
@@ -619,6 +630,5 @@ public class CameraView extends FrameLayout {
         void onLongPress();
         void onActionUp();
     }
-    /***Cameraview ui 事件监听-----------------------------------------**/
-
+    //缩放对焦事件监听---------------------------------------------------------------------
 }

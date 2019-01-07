@@ -168,12 +168,11 @@ public class CameraManager {
         mCurrentMode.setCurrentAspectRatio(ratio);
     }
     /**
-     * 获取最近一次拍照的图片ID
+     * 获取最近一次拍照的图片path
      * @param context
      * @return
      */
     public String getRecentlyPhotoPath(Context context) {
-        //String searchPath = MediaStore.Files.FileColumns.DATA + " LIKE '%" + "/DCIM/Camera/" + "%' ";
         String searchPath = MediaStore.Files.FileColumns.DATA + " LIKE '%" + FileUtils.DIRECTORY + "%' ";
         Uri uri = MediaStore.Files.getContentUri("external");
         Cursor cursor = context.getContentResolver().query(
@@ -184,7 +183,7 @@ public class CameraManager {
             mPhotoPath =  cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
             mPhotoSize =  cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE));
         }
-        if (!cursor.isClosed()) {
+        if (cursor!=null && !cursor.isClosed()) {
             cursor.close();
         }
         return mPhotoPath;
@@ -218,23 +217,11 @@ public class CameraManager {
     public boolean getFocusMode(){
         return mCurrentMode.getFocusMode();
     }
-
-    public boolean isSupportFocusArea(){
-        return mCurrentMode.isFocusAreaSupported();
-    }
     /**
      * 点击对焦
      * @param event
-     * @param viewWidth
-     * @param viewHeight
      */
-    public void setFocusOnTouchEvent(MotionEvent event, int viewWidth, int viewHeight){
-
-    }
-
-    private int clamp(int x, int min, int max) {
-        if (x > max) return max;
-        if (x < min) return min;
-        return x;
+    public void setFocusOnTouchEvent(MotionEvent event){
+        mCurrentMode.handleFocus(event);
     }
 }

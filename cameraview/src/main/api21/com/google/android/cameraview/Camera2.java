@@ -3,6 +3,7 @@ package com.google.android.cameraview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -18,6 +19,7 @@ import android.media.ImageReader;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.MotionEvent;
 import android.view.Surface;
 
 import java.nio.ByteBuffer;
@@ -266,6 +268,21 @@ public class Camera2 extends CameraViewImpl {
     }
 
     @Override
+    public void setFocusArea(Point point) {
+
+    }
+
+    @Override
+    public boolean isZoomSupported() {
+        return false;
+    }
+
+    @Override
+    public void handleFocus(MotionEvent event) {
+
+    }
+
+    @Override
     public int getMaxZoom() {
         return 0;
     }
@@ -282,16 +299,9 @@ public class Camera2 extends CameraViewImpl {
 
     @Override
     public void setAELock(boolean isLock) {
-
     }
-
     @Override
     public boolean getAELock() {
-        return false;
-    }
-
-    @Override
-    public boolean isFocusAreaSupported() {
         return false;
     }
     /*camera interface add end ---------------------------*/

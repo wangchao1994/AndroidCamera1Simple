@@ -226,9 +226,9 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     }
 
     @Override
-    public void focusOnTouch(MotionEvent event, int viewWidth, int viewHeight) {
+    public void focusOnTouch(MotionEvent event) {
         if (mCameraManager != null){
-            mCameraManager.setFocusOnTouchEvent(event,viewWidth,viewHeight);
+            mCameraManager.setFocusOnTouchEvent(event);
         }
     }
 

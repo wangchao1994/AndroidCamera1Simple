@@ -16,9 +16,8 @@
 
 package com.google.android.cameraview;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -26,18 +25,19 @@ import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
-import android.view.Surface;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.example.cameraview.utils.CameraUtils;
 import com.example.cameraview.utils.file.FileUtils;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+import static android.content.ContentValues.TAG;
 @SuppressWarnings("deprecation")
 public class Camera1 extends CameraViewImpl{
 
@@ -62,7 +62,7 @@ public class Camera1 extends CameraViewImpl{
     private float mZoomValues = Constants.ZOOM_VALUE;
     private boolean isAELock;
     private int maxZoom;
-    private boolean mFocusAreaSupported;
+    private Point mPointFocusArea;
 
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -287,9 +287,6 @@ public class Camera1 extends CameraViewImpl{
         for (int i = 0; i < supportedFlashModes.size(); i++) {
             Log.d("prepareVideoRecorder","supportedFlashModes===="+supportedFlashModes.get(i));
         }
-        //最大缩放值
-        int maxZoom = mCameraParameters.getMaxZoom();
-        Log.d("prepareVideoRecorder","getMaxZoom---------------->size="+maxZoom);
         // AspectRatio
         if (mAspectRatio == null) {
             mAspectRatio = Constants.DEFAULT_ASPECT_RATIO;
@@ -320,9 +317,6 @@ public class Camera1 extends CameraViewImpl{
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,mDisplayOrientation));
-        //是否支持聚焦Area
-        mFocusAreaSupported = (mCameraParameters.getMaxNumFocusAreas() > 0 && CameraUtils.isSupported(Camera.Parameters.FOCUS_MODE_AUTO, mCameraParameters.getSupportedFocusModes()));
-        Log.d("camera_log","mFocusAreaSupported-----------mFocusAreaSupported------"+mFocusAreaSupported);
         maxZoom = mCameraParameters.getMaxZoom();
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
@@ -425,15 +419,6 @@ public class Camera1 extends CameraViewImpl{
         }
         return null;
     }
-
-    /**
-     * 是否支持FocusArea
-     * @return
-     */
-    @Override
-    public boolean isFocusAreaSupported(){
-        return mFocusAreaSupported;
-    }
     /**
      * 获取支持最大的Zoom值
      * @return
@@ -524,6 +509,88 @@ public class Camera1 extends CameraViewImpl{
         }
         return null;
     }
+
+    @Override
+    public void setFocusArea(Point point) {
+        if (mPointFocusArea == point){
+            return;
+        }
+        if (setFocusAreaInternal(point)){
+            mCamera.setParameters(mCameraParameters);
+        }
+    }
+
+    @Override
+    public boolean isZoomSupported() {
+        if (mCameraParameters.isZoomSupported()){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean setFocusAreaInternal(Point point) {
+        mPointFocusArea = point;
+        if (isCameraOpened()) {
+            List<Camera.Area> focusAera = getFocusAera(point);
+            mCameraParameters.setFocusAreas(focusAera);
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public void handleFocus(MotionEvent event) {
+        int viewWidth = mPreview.mWidth;
+        int viewHeight =  mPreview.mHeight;
+        Rect focusRect = CameraUtils.calculateTapArea(event.getX(), event.getY(), 1f, viewWidth, viewHeight);
+        Rect meteringRect = CameraUtils.calculateTapArea(event.getX(), event.getY(), 1.5f, viewWidth, viewHeight);
+        mCamera.cancelAutoFocus();
+        Log.d("singleTap","mCameraParameters.getMaxNumFocusAreas()==="+mCameraParameters.getMaxNumFocusAreas());
+        Log.d("singleTap","mCameraParameters.getMaxNumMeteringAreas()==="+mCameraParameters.getMaxNumMeteringAreas());
+        if (mCameraParameters.getMaxNumFocusAreas() > 0) {
+            List<Camera.Area> focusAreas = new ArrayList<>();
+            focusAreas.add(new Camera.Area(focusRect, 800));
+            mCameraParameters.setFocusAreas(focusAreas);
+        } else {
+            Log.i("singleTap", "focus areas not supported");
+        }
+        if (mCameraParameters.getMaxNumMeteringAreas() > 0) {
+            List<Camera.Area> meteringAreas = new ArrayList<>();
+            meteringAreas.add(new Camera.Area(meteringRect, 800));
+            mCameraParameters.setMeteringAreas(meteringAreas);
+        } else {
+            Log.i(TAG, "metering areas not supported");
+        }
+        final String currentFocusMode = mCameraParameters.getFocusMode();
+        mCameraParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+        mCamera.setParameters(mCameraParameters);
+        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera) {
+                Camera.Parameters params = camera.getParameters();
+                params.setFocusMode(currentFocusMode);
+                camera.setParameters(params);
+            }
+        });
+    }
+    /**
+     * 获取当前聚焦区域
+     * @param point
+     * @return
+     */
+    private List<Camera.Area> getFocusAera(Point point) {
+        List<Camera.Area> areas = new ArrayList<Camera.Area>();
+        int left = point.x - 300;
+        int top = point.y - 300;
+        int right = point.x + 300;
+        int bottom = point.y + 300;
+        left = left < -1000 ? -1000 : left;
+        top = top < -1000 ? -1000 : top;
+        right = right > 1000 ? 1000 : right;
+        bottom = bottom > 1000 ? 1000 : bottom;
+        areas.add(new Camera.Area(new Rect(left, top, right, bottom), 100));
+        return areas;
+    }
+
     /**
      * 参数设置
      * @return
@@ -543,7 +610,7 @@ public class Camera1 extends CameraViewImpl{
         Log.d("prepareVideoRecorder","mNextVideoAbsolutePath="+mNextVideoAbsolutePath);
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setPreviewDisplay(mPreview.getSurface());
-        int rotateDegree = getRotateDegree(getView().getContext());
+        int rotateDegree = CameraUtils.getRotateDegree(getView().getContext(),mCameraId,mCameraInfo);
         Log.d("prepareVideoRecorder","rotateDegree=============="+rotateDegree);
         mMediaRecorder.setOrientationHint(rotateDegree);
         try {
@@ -561,7 +628,6 @@ public class Camera1 extends CameraViewImpl{
     }
 
     private class MediaPrepareTask extends AsyncTask<Void, Void, Boolean> {
-
         @Override
         protected Boolean doInBackground(Void... voids) {
             if (prepareVideoRecorder()) {
@@ -598,34 +664,6 @@ public class Camera1 extends CameraViewImpl{
             mCamera.lock();
         }
     }
-    /**
-     * 获取旋转角度
-     * @param context
-     * @return
-     */
-    private int getRotateDegree(Context context){
-        int phoneDegree = 0;
-        int result = 0;
-        //获得手机方向
-        Activity activity = (Activity) context;
-        int phoneRotate =activity.getWindowManager().getDefaultDisplay().getOrientation();
-        //得到手机的角度
-        switch (phoneRotate) {
-            case Surface.ROTATION_0: phoneDegree = 0; break;        //0
-            case Surface.ROTATION_90: phoneDegree = 90; break;      //90
-            case Surface.ROTATION_180: phoneDegree = 180; break;    //180
-            case Surface.ROTATION_270: phoneDegree = 270; break;    //270
-        }
-        //分别计算前后置摄像头需要旋转的角度
-        if(mCameraId == 1){
-            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_FRONT, mCameraInfo);
-            result = (mCameraInfo.orientation + phoneDegree) % 360;
-            result = (360 - result) % 360;
-        }else{
-            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, mCameraInfo);
-            result = (mCameraInfo.orientation - phoneDegree +360) % 360;
-        }
-        return result;
-    }
-//录像 end------------------------------------------------------
+
+    //录像 end------------------------------------------------------
 }

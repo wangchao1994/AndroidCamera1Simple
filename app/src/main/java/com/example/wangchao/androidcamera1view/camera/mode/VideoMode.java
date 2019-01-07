@@ -1,6 +1,8 @@
 package com.example.wangchao.androidcamera1view.camera.mode;
 
 import android.util.Log;
+import android.view.MotionEvent;
+
 import com.example.cameraview.CameraView;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
@@ -11,7 +13,6 @@ import com.example.wangchao.androidcamera1view.utils.rxjava.ObservableBuilder;
 import com.google.android.cameraview.AspectRatio;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -76,12 +77,6 @@ public class VideoMode extends CameraModeBase {
             cameraView.setFlash(autoFlash);
         }
     }
-
-    @Override
-    public Set<AspectRatio> getSupportedAspectRatios() {
-        return null;
-    }
-
     @Override
     public AspectRatio getCurrentAspectRatio() {
         CameraView cameraView = getCameraView();
@@ -144,12 +139,11 @@ public class VideoMode extends CameraModeBase {
     }
 
     @Override
-    public boolean isFocusAreaSupported() {
+    public void handleFocus(MotionEvent event) {
         CameraView cameraView = getCameraView();
         if (cameraView != null){
-            return cameraView.isFocusAreaSupported();
+            cameraView.handleFocus(event);
         }
-        return false;
     }
 
     @Override

@@ -26,7 +26,9 @@ import android.view.View;
  * Encapsulates all the operations related to camera preview in a backward-compatible manner.
  */
 public abstract class PreviewImpl {
-
+    public View mSingleTapArea;
+    public View mLongPressArea;
+    private static final int SINGLE_TAPUP = 0;
     interface Callback {
         void onSurfaceChanged();
     }
@@ -76,6 +78,7 @@ public abstract class PreviewImpl {
     public int getHeight() {
         return mHeight;
     }
+
     public abstract View getCurrentView();
 
 }

@@ -1,12 +1,12 @@
 package com.example.wangchao.androidcamera1view.camera.controller;
 
+import android.view.MotionEvent;
+
 import com.example.cameraview.CameraView;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CallbackBridge;
 
 import java.lang.ref.WeakReference;
-import java.util.Set;
-
 import rx.Observable;
 
 public abstract class CameraModeBase {
@@ -57,7 +57,6 @@ public abstract class CameraModeBase {
     /**
      * 分辨率
      */
-    public abstract Set<AspectRatio> getSupportedAspectRatios();
     public abstract AspectRatio getCurrentAspectRatio();
     public abstract void setCurrentAspectRatio(AspectRatio aspectRatio);
 
@@ -74,7 +73,7 @@ public abstract class CameraModeBase {
      */
     public abstract void setFocusMode(boolean isAutoFocusMode);
     public abstract boolean getFocusMode();
-    public abstract boolean isFocusAreaSupported();
+    public abstract void handleFocus(MotionEvent event);
     /**
      *点击拍照Or录像事件
      */

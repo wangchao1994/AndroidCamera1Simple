@@ -1,5 +1,7 @@
 package com.example.wangchao.androidcamera1view.camera.mode;
 
+import android.view.MotionEvent;
+
 import com.example.cameraview.CameraView;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
@@ -7,8 +9,6 @@ import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
 import com.example.wangchao.androidcamera1view.utils.rxjava.ObservableBuilder;
 import com.google.android.cameraview.AspectRatio;
-
-import java.util.Set;
 
 public class PhotoMode extends CameraModeBase {
     public static final String TAG = PhotoMode.class.getSimpleName();
@@ -65,16 +65,6 @@ public class PhotoMode extends CameraModeBase {
         if (cameraView != null){
             cameraView.setFlash(autoFlash);
         }
-    }
-
-    @Override
-    public Set<AspectRatio> getSupportedAspectRatios() {
-        CameraView cameraView = getCameraView();
-        if (cameraView != null){
-            Set<AspectRatio> supportedAspectRatios = cameraView.getSupportedAspectRatios();
-            return supportedAspectRatios;
-        }
-        return null;
     }
 
     @Override
@@ -139,12 +129,11 @@ public class PhotoMode extends CameraModeBase {
     }
 
     @Override
-    public boolean isFocusAreaSupported() {
+    public void handleFocus(MotionEvent event) {
         CameraView cameraView = getCameraView();
         if (cameraView != null){
-            return cameraView.isFocusAreaSupported();
+            cameraView.handleFocus(event);
         }
-        return false;
     }
 
     @Override
