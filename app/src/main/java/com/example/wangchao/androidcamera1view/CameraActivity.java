@@ -33,7 +33,7 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
         cameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentByTag(CameraFragment.TAG);
         if (cameraFragment == null) {
             cameraFragment = CameraFragment.newInstance(this);
-            getSupportFragmentManager().beginTransaction().add(R.id.container, cameraFragment, CameraFragment.TAG).commitAllowingStateLoss();
+            getSupportFragmentManager().beginTransaction().add(R.id.container, cameraFragment, CameraFragment.TAG).addToBackStack(null).commitAllowingStateLoss();
         }
         mCameraPresenter = new CameraPresenter(cameraFragment,this);
     }
