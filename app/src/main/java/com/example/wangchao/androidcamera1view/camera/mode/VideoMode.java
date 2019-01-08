@@ -290,7 +290,7 @@ public class VideoMode extends CameraModeBase {
      */
     public void onReleaseMediaRecord(){
         CameraView cameraView = getCameraView();
-        Log.d("wangchao_camera","cameraView.isRecording()====="+cameraView.isRecording());
+        Log.d(TAG,"cameraView.isRecording()====="+cameraView.isRecording());
         if (cameraView != null && cameraView.isRecording()){
             stopRecordingVideo(true);
         }

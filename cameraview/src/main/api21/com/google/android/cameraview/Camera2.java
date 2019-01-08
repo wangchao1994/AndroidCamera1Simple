@@ -3,7 +3,6 @@ package com.google.android.cameraview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -266,12 +265,6 @@ public class Camera2 extends CameraViewImpl {
     public String getNextVideoPath() {
         return null;
     }
-
-    @Override
-    public void setFocusArea(Point point) {
-
-    }
-
     @Override
     public boolean isZoomSupported() {
         return false;

@@ -16,6 +16,7 @@
 
 package com.google.android.cameraview;
 
+import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -63,7 +64,8 @@ public class Camera1 extends CameraViewImpl{
     private boolean isAELock;
     private int maxZoom;
     private Point mPointFocusArea;
-
+    private final static int CACHE_BUFFER_NUM = 3;
+    private byte[][] mPreviewCallbackBuffers = new byte[CACHE_BUFFER_NUM][];
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
         preview.setCallback(new PreviewImpl.Callback() {
@@ -315,6 +317,7 @@ public class Camera1 extends CameraViewImpl{
             mCamera.stopPreview();
         }
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
+        Log.d("mCameraParameters","size.getWidth()==="+size.getWidth()+"   size.getHeight()="+size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,mDisplayOrientation));
         maxZoom = mCameraParameters.getMaxZoom();
@@ -322,12 +325,23 @@ public class Camera1 extends CameraViewImpl{
         setFlashInternal(mFlash);
         setZoomInternal(mZoomValues);
         mCamera.setParameters(mCameraParameters);
+        mCamera.setPreviewCallback(mPreviewCallBack);
+        /*int bufferSize = getBufferSize(size.getWidth(),size.getHeight());
+        for (int i = 0; i < mPreviewCallbackBuffers.length; i++) {
+            if (mPreviewCallbackBuffers[i] == null) {
+                mPreviewCallbackBuffers[i] = new byte[bufferSize];
+            }
+            mCamera.addCallbackBuffer(mPreviewCallbackBuffers[i]);
+        }
+        mCamera.setPreviewCallbackWithBuffer(mPreviewCallBack);*/
         if (mShowingPreview) {
             mCamera.startPreview();
         }
     }
-
-
+    private int getBufferSize(int width,int height) {
+        int imageFormat = mCameraParameters.getPreviewFormat();
+        return width * height * ImageFormat.getBitsPerPixel(imageFormat) / 8;
+    }
     @SuppressWarnings("SuspiciousNameCombination")
     private Size chooseOptimalSize(SortedSet<Size> sizes) {
         if (!mPreview.isReady()) { // Not yet laid out
@@ -357,6 +371,8 @@ public class Camera1 extends CameraViewImpl{
 
     private void releaseCamera() {
         if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            //mCamera.setPreviewCallbackWithBuffer(null);
             mCamera.release();
             mCamera = null;
             mCallback.onCameraClosed();
@@ -509,33 +525,9 @@ public class Camera1 extends CameraViewImpl{
         }
         return null;
     }
-
-    @Override
-    public void setFocusArea(Point point) {
-        if (mPointFocusArea == point){
-            return;
-        }
-        if (setFocusAreaInternal(point)){
-            mCamera.setParameters(mCameraParameters);
-        }
-    }
-
     @Override
     public boolean isZoomSupported() {
-        if (mCameraParameters.isZoomSupported()){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean setFocusAreaInternal(Point point) {
-        mPointFocusArea = point;
-        if (isCameraOpened()) {
-            List<Camera.Area> focusAera = getFocusAera(point);
-            mCameraParameters.setFocusAreas(focusAera);
-            return true;
-        }
-        return false;
+        return mCameraParameters.isZoomSupported();
     }
     @Override
     public void handleFocus(MotionEvent event) {
@@ -572,25 +564,6 @@ public class Camera1 extends CameraViewImpl{
             }
         });
     }
-    /**
-     * 获取当前聚焦区域
-     * @param point
-     * @return
-     */
-    private List<Camera.Area> getFocusAera(Point point) {
-        List<Camera.Area> areas = new ArrayList<Camera.Area>();
-        int left = point.x - 300;
-        int top = point.y - 300;
-        int right = point.x + 300;
-        int bottom = point.y + 300;
-        left = left < -1000 ? -1000 : left;
-        top = top < -1000 ? -1000 : top;
-        right = right > 1000 ? 1000 : right;
-        bottom = bottom > 1000 ? 1000 : bottom;
-        areas.add(new Camera.Area(new Rect(left, top, right, bottom), 100));
-        return areas;
-    }
-
     /**
      * 参数设置
      * @return
@@ -646,6 +619,7 @@ public class Camera1 extends CameraViewImpl{
         @Override
         protected void onPreExecute() {
             //surfaceView TextureView
+            Log.d("onPreExecute","onPreExecute-------------------------------->");
             View currentView = mPreview.getCurrentView();
             if (currentView != null){
                 currentView.setKeepScreenOn(true);
@@ -666,4 +640,15 @@ public class Camera1 extends CameraViewImpl{
     }
 
     //录像 end------------------------------------------------------
+    //Frame
+    Camera.PreviewCallback mPreviewCallBack = new Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+
+              Log.d("onPreviewFrame","data--------------->="+data.length);
+//              if (mCamera != null && data != null && data.length == (mPreview.mHeight * mPreview.mWidth * 3 / 2)){
+//                  mCamera.addCallbackBuffer(data);
+//              }
+        }
+    };
 }

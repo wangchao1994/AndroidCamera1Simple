@@ -475,12 +475,6 @@ public class CameraView extends FrameLayout {
         return mImpl.getAELock();
     }
     /**
-     * set Focus Point
-     */
-    public void setFocusArea(Point point){
-        mImpl.setFocusArea(point);
-    }
-    /**
      * Take a picture. The result will be returned to
      * {@link CallbackBridge.Callback#onPictureTaken(CameraView, byte[])}.
      */
