@@ -24,10 +24,13 @@ public class VideoManager {
     public VideoManager(CameraViewImpl cameraView){
         mCameraViewImpl = cameraView;
     }
+
+    /**
+     * Camera获取
+     * 避免未release
+     */
     public void startRecording(){
-        if (mCamera == null){
-            mCamera = mCameraViewImpl.getCurrentCamera();
-        }
+        mCamera = mCameraViewImpl.getCurrentCamera();
         if (optimalVideoSize == null){
             optimalVideoSize = mCameraViewImpl.getVideoSize();
         }

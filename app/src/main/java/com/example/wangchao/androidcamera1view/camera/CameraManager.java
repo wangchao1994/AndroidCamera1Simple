@@ -25,9 +25,7 @@ public class CameraManager {
     private CameraModeBase mVideoMode;
     public static final int  MODE_CAMERA = 1;//拍照模式
     public static final int MODE_VIDEO_RECORD = 2;//录像模式
-    private String mPhotoPathId;
     private String mPhotoPath;
-    private String mPhotoSize;
     private CameraManager(ICameraImpl iCameraImpl){
         mICameraImpl = iCameraImpl;
         mPhotoMode = new PhotoMode(mICameraImpl);
@@ -35,6 +33,7 @@ public class CameraManager {
         //默认为拍照模式
         mCurrentMode = mPhotoMode;
     }
+
     public static CameraManager getCameraManagerInstance(ICameraImpl iCameraImpl) {
         if (null == mCameraManager){
             synchronized (CameraManager.class){
@@ -179,9 +178,7 @@ public class CameraManager {
                 uri, new String[]{MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.DATA,MediaStore.Files.FileColumns.SIZE}, searchPath, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
 
         if (cursor != null && cursor.moveToFirst()) {
-            mPhotoPathId = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
             mPhotoPath =  cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-            mPhotoSize =  cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE));
         }
         if (cursor!=null && !cursor.isClosed()) {
             cursor.close();
