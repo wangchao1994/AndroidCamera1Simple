@@ -10,6 +10,7 @@ import com.example.cameraview.ui.ICameraUI.OnGestureListener;
  * 包括对焦和缩放
  */
 public class UIEventGlobal {
+
     private OnGestureListener mOuterGestureLsn;
     private ScaleGestureDetector mScaleGestureDector;
     private GestureDetector mGestureDector;

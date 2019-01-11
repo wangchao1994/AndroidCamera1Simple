@@ -36,7 +36,6 @@ public class Camera1 extends CameraViewImpl{
     private final SizeMap mVideoSizes = new SizeMap();
     private Camera.Size optimalVideoSize;
     private float mZoomValues = Constants.ZOOM_VALUE;
-    private boolean isAELock;
     private int maxZoom;
     private VideoManager mVideoManager;
 
@@ -301,7 +300,6 @@ public class Camera1 extends CameraViewImpl{
             mCamera.stopPreview();
         }
         mCameraParameters.setPreviewSize(size.getWidth(), size.getHeight());
-        Log.d("mCameraParameters","size.getWidth()==="+size.getWidth()+"   size.getHeight()="+size.getHeight());
         mCameraParameters.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
         mCameraParameters.setRotation(CameraUtils.calcCameraRotation(mCameraInfo,mDisplayOrientation));
         maxZoom = mCameraParameters.getMaxZoom();
@@ -309,10 +307,23 @@ public class Camera1 extends CameraViewImpl{
         setFlashInternal(mFlash);
         setZoomInternal(mZoomValues);
         mCamera.setParameters(mCameraParameters);
+        mCamera.setPreviewCallback(mPreviewCallBack);
         if (mShowingPreview) {
             mCamera.startPreview();
         }
     }
+
+    /**
+     * Camera preview
+     */
+    Camera.PreviewCallback mPreviewCallBack = new Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            Log.d("onPreviewFrame","onPreviewFrame----------------------->"+data.length);
+            mCallback.onPreviewFrame(data);
+        }
+    };
+
 
     @SuppressWarnings("SuspiciousNameCombination")
     private Size chooseOptimalSize(SortedSet<Size> sizes) {

@@ -1,5 +1,7 @@
 package com.google.android.cameraview;
 
+import android.util.Log;
+
 import com.example.cameraview.CameraView;
 
 import java.util.ArrayList;
@@ -40,6 +42,14 @@ public class CallbackBridge implements CameraViewImpl.Callback {
             callback.onPictureTaken(mCameraView, data);
         }
     }
+
+    @Override
+    public void onPreviewFrame(byte[] data) {
+        for (Callback callback : mCallbacks) {
+            callback.onPreviewFrame(mCameraView, data);
+        }
+    }
+
     public void reserveRequestLayoutOnOpen() {
         mRequestLayoutOnOpen = true;
     }
@@ -71,6 +81,14 @@ public class CallbackBridge implements CameraViewImpl.Callback {
          * @param data       JPEG data.
          */
         public void onPictureTaken(CameraView cameraView, byte[] data) {
+        }
+        /**
+         * Called when a picture is taken.
+         *
+         * @param cameraView The associated {@link CameraView}.
+         * @param data       JPEG data.
+         */
+        public void onPreviewFrame(CameraView cameraView, byte[] data) {
         }
     }
 

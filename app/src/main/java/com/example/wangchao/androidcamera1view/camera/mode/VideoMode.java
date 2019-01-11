@@ -166,6 +166,12 @@ public class VideoMode extends CameraModeBase {
     @Override
     protected void writePictureData(byte[] data) {
     }
+
+    @Override
+    protected void onCallPreviewFrame(byte[] data) {
+        Log.d("onCallPreviewFrame","onCallPreviewFrame----------456------------------------------->"+data.length);
+    }
+
     @Override
     public void cameraPhotoOrVideoClick() {
         Log.d(TAG,"getCameraView().isRecording()="+getCameraView().isRecording());

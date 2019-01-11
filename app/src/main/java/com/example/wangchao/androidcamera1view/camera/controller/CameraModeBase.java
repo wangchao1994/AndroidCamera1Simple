@@ -101,7 +101,15 @@ public abstract class CameraModeBase {
             super.onPictureTaken(cameraView, data);
             writePictureData(data);
         }
+
+        @Override
+        public void onPreviewFrame(CameraView cameraView, byte[] data) {
+            super.onPreviewFrame(cameraView, data);
+            onCallPreviewFrame(data);
+        }
     };
+    //预览流
+    protected abstract void onCallPreviewFrame(byte[] data);
     //Camera图片数据-----------------------------------------
 
     public CameraPictureOrVideoResultCallBack mCameraPitureOrVideoResultCallBack;

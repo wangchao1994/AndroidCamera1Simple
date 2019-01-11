@@ -1,5 +1,6 @@
 package com.example.wangchao.androidcamera1view.camera.mode;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.cameraview.CameraView;
@@ -154,6 +155,11 @@ public class PhotoMode extends CameraModeBase {
             //数据写入返回路径
             mCameraPitureOrVideoResultCallBack.callResultBack(ObservableBuilder.createWriteCaptureData(BaseApplication.getInstance(), data));
         }
+    }
+
+    @Override
+    protected void onCallPreviewFrame(byte[] data) {
+        Log.d("onCallPreviewFrame","onCallPreviewFrame--------------------123--------------------->"+data.length);
     }
 
 
