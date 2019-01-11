@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.google.android.cameraview;
 
 import android.annotation.TargetApi;
@@ -33,9 +17,7 @@ import com.example.cameraview.R;
 public class TextureViewPreview extends PreviewImpl {
 
     private final TextureView mTextureView;
-
     private int mDisplayOrientation;
-
     public TextureViewPreview(Context context, ViewGroup parent) {
         final View view = View.inflate(context, R.layout.texture_view, parent);
         mTextureView = (TextureView) view.findViewById(R.id.texture_view);
@@ -73,15 +55,6 @@ public class TextureViewPreview extends PreviewImpl {
     public void setBufferSize(int width, int height) {
         mTextureView.getSurfaceTexture().setDefaultBufferSize(width, height);
     }
-
-    @Override
-    public View getCurrentView() {
-        if (mTextureView != null){
-            return mTextureView;
-        }
-        return null;
-    }
-
     @Override
     public Surface getSurface() {
         return new Surface(mTextureView.getSurfaceTexture());

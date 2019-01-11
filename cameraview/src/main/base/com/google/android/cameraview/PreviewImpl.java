@@ -78,7 +78,4 @@ public abstract class PreviewImpl {
     public int getHeight() {
         return mHeight;
     }
-
-    public abstract View getCurrentView();
-
 }

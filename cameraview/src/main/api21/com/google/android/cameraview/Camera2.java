@@ -241,20 +241,22 @@ public class Camera2 extends CameraViewImpl {
     public int getFacing() {
         return mFacing;
     }
-
+    /*camera interface add start ---------------------------*/
     @Override
     public Camera getCurrentCamera() {
         return null;
     }
-    /*camera interface add start ---------------------------*/
+
+    @Override
+    public Camera.Size getVideoSize() {
+        return null;
+    }
     @Override
     public void startRecording() {
-
     }
 
     @Override
     public void stopRecording() {
-
     }
     @Override
     public boolean isRecording() {
@@ -272,9 +274,7 @@ public class Camera2 extends CameraViewImpl {
 
     @Override
     public void handleFocus(MotionEvent event) {
-
     }
-
     @Override
     public int getMaxZoom() {
         return 0;
@@ -284,18 +284,9 @@ public class Camera2 extends CameraViewImpl {
     public void setZoom(float zoomValues) {
 
     }
-
     @Override
     public float getZoom() {
         return 1.0f;
-    }
-
-    @Override
-    public void setAELock(boolean isLock) {
-    }
-    @Override
-    public boolean getAELock() {
-        return false;
     }
     /*camera interface add end ---------------------------*/
 
@@ -388,6 +379,21 @@ public class Camera2 extends CameraViewImpl {
     public void setDisplayOrientation(int displayOrientation) {
         mDisplayOrientation = displayOrientation;
         mPreview.setDisplayOrientation(mDisplayOrientation);
+    }
+
+    @Override
+    public PreviewImpl getPreview() {
+        return mPreview;
+    }
+
+    @Override
+    public int getCameraId() {
+        return Integer.valueOf(mCameraId);
+    }
+
+    @Override
+    public Camera.CameraInfo getCameraInfo() {
+        return null;
     }
 
     /**

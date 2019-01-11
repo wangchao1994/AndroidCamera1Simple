@@ -39,10 +39,19 @@ public class VideoMode extends CameraModeBase {
     }
     @Override
     public void switchCameraId(int cameraId) {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            cameraView.setFacing(cameraId);
+        }
     }
 
     @Override
     public int getCameraFacingId() {
+        CameraView cameraView = getCameraView();
+        if (cameraView != null){
+            int facing = cameraView.getFacing();
+            return facing;
+        }
         return 0;
     }
 
@@ -216,7 +225,7 @@ public class VideoMode extends CameraModeBase {
      * 完成录制，输出最终的视频录制文件
      */
     private void mergeMultipleFileCallBack() {
-        Log.d("stopRecordingVideo","oldVideoPath.size()====="+oldVideoPath.size());
+        Log.d(TAG,"oldVideoPath.size()====="+oldVideoPath.size());
         if (oldVideoPath.size() > 0) {
             Log.i(TAG, " mergeMultipleFileCallBack file.size()===" + oldVideoPath.size());
             Subscription subscription = ObservableBuilder.createMergeMuiltFile(BaseApplication.getInstance(), oldVideoPath.get(0), mNextVideoAbsolutePath)
@@ -225,7 +234,7 @@ public class VideoMode extends CameraModeBase {
                     .subscribe(new Action1<String>() {
                         @Override
                         public void call(String s) {
-                            Log.d("mCameraPitureOrVideo","mCameraPitureOrVideoResultCallBack="+mCameraPitureOrVideoResultCallBack);
+                            Log.d(TAG,"mCameraPitureOrVideoResultCallBack="+mCameraPitureOrVideoResultCallBack);
                             if (mCameraPitureOrVideoResultCallBack != null) {
                                 mCameraPitureOrVideoResultCallBack.callResultBack(ObservableBuilder.createVideo(s));
                             }
@@ -290,7 +299,6 @@ public class VideoMode extends CameraModeBase {
      */
     public void onReleaseMediaRecord(){
         CameraView cameraView = getCameraView();
-        Log.d(TAG,"cameraView.isRecording()====="+cameraView.isRecording());
         if (cameraView != null && cameraView.isRecording()){
             stopRecordingVideo(true);
         }

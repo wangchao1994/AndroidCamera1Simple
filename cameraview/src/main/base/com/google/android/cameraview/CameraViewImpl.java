@@ -20,6 +20,8 @@ import android.hardware.Camera;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.cameraview.ui.UIEventGlobal;
+
 import java.util.Set;
 
 public abstract class CameraViewImpl {
@@ -80,18 +82,19 @@ public abstract class CameraViewImpl {
         void onPictureTaken(byte[] data);
 
     }
+    public abstract PreviewImpl getPreview();
+    public abstract int getCameraId();
+    public abstract Camera.CameraInfo getCameraInfo();
     public abstract int getMaxZoom();
     public abstract void setZoom(float zoomValues);
     public abstract float getZoom();
-    public abstract void setAELock(boolean isLock);
-    public abstract boolean getAELock();
     public abstract Camera getCurrentCamera();
+    public abstract Camera.Size getVideoSize();
     public abstract void startRecording();
     public abstract void stopRecording();
     public abstract boolean isRecording();
     public abstract String getNextVideoPath();
     public abstract boolean isZoomSupported();
     public abstract void handleFocus(MotionEvent event);
-
 
 }

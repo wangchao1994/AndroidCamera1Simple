@@ -30,7 +30,6 @@ import com.example.cameraview.R;
 public class SurfaceViewPreview extends PreviewImpl {
 
     final SurfaceView mSurfaceView;
-
     public SurfaceViewPreview(Context context, ViewGroup parent) {
         final View view = View.inflate(context, R.layout.surface_view, parent);
         mSurfaceView = (SurfaceView) view.findViewById(R.id.surface_view);
@@ -53,7 +52,6 @@ public class SurfaceViewPreview extends PreviewImpl {
             @Override
             public void surfaceDestroyed(SurfaceHolder h) {
                 setSize(0, 0);
-                Log.d("SurfaceViewPreview","---------------------surfaceDestroyed-------------------------------->");
             }
         });
     }
@@ -66,14 +64,6 @@ public class SurfaceViewPreview extends PreviewImpl {
     @Override
     public SurfaceHolder getSurfaceHolder() {
         return mSurfaceView.getHolder();
-    }
-
-    @Override
-    public View getCurrentView() {
-        if (mSurfaceView != null){
-            return mSurfaceView;
-        }
-        return null;
     }
 
     @Override

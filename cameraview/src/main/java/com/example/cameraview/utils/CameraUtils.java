@@ -226,7 +226,7 @@ public class CameraUtils {
      * @return
      */
     public static boolean isSupported(String value, List<String> supported) {
-        return supported == null ? false : supported.indexOf(value) >= 0;
+        return supported != null && supported.indexOf(value) >= 0;
     }
     /**
      * getSupportedVideoSizes
@@ -362,7 +362,7 @@ public class CameraUtils {
         Log.d(TAG,"mimeType====="+mimeType);
         return mimeType;
     }
-    public  static Uri getItemContentUri(Context context,String path) {
+    private static Uri getItemContentUri(Context context, String path) {
         final String[] projection = {MediaStore.MediaColumns._ID};
         final String where = MediaStore.MediaColumns.DATA + " = ?";
         Uri baseUri = MediaStore.Files.getContentUri("external");
@@ -384,7 +384,7 @@ public class CameraUtils {
                     itemUri =  Uri.withAppendedPath(baseUri, String.valueOf(id));
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         } finally {
             if (c != null) {
                 c.close();
@@ -392,7 +392,7 @@ public class CameraUtils {
         }
         return itemUri;
     }
-    public static String getFileExtension(String fileName) {
+    private static String getFileExtension(String fileName) {
         if (fileName == null) {
             return null;
         }

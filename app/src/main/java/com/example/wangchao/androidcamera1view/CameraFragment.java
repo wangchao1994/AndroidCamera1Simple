@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cameraview.CameraView;
+import com.example.cameraview.ui.ICameraUI;
 import com.example.cameraview.utils.CameraUtils;
 import com.example.wangchao.androidcamera1view.app.ICameraImpl;
 import com.example.wangchao.androidcamera1view.base.BaseApplication;
@@ -32,7 +33,7 @@ import com.google.android.cameraview.AspectRatio;
 /**
  * Main CameraView
  */
-public class CameraFragment extends Fragment implements CameraContract.CameraViewCall ,View.OnClickListener,CameraView.OnGestureListener{
+public class CameraFragment extends Fragment implements CameraContract.CameraViewCall ,View.OnClickListener,ICameraUI.OnGestureListener{
 
     public static final String TAG = CameraFragment.class.getSimpleName();
 
@@ -95,7 +96,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
 
     private void initView(View mRootCameraView) {
         mCameraView = mRootCameraView.findViewById(R.id.camera_view);
-        mCameraView.setOnGestureListener(this);
+        mCameraView.getUIEventGlobal().setOnGestureListener(this);
         mBtnTakePicture = mRootCameraView.findViewById(R.id.fb_take_picture);
         mBtnVideoRecord = mRootCameraView.findViewById(R.id.fb_video_recording);
         mCameraFlashAuto = mRootCameraView.findViewById(R.id.iv_flash_switch);
@@ -195,6 +196,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                     mCameraPresenter.setViewShowOrHide(mCameraFlashAuto,false);
                     mCameraPresenter.setViewShowOrHide(mCameraIdSwitch,false);
                     mCameraPresenter.setViewShowOrHide(mCameraViewZoom,false);
+                    mCameraPresenter.setViewShowOrHide(mCameraViewFoucs,false);
                 }
                 break;
             //录制暂停
@@ -212,6 +214,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                     mCameraPresenter.setViewShowOrHide(mCameraFlashAuto,true);
                     mCameraPresenter.setViewShowOrHide(mCameraIdSwitch,true);
                     mCameraPresenter.setViewShowOrHide(mCameraViewZoom,true);
+                    mCameraPresenter.setViewShowOrHide(mCameraViewFoucs,true);
                 }
                 break;
             default:

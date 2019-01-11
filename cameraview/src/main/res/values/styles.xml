@@ -20,7 +20,6 @@
         <item name="autoFocus">true</item>
         <item name="flash">auto</item>
         <item name="zoom">1.0f</item>
-        <item name="autoExposureLock">false</item>
     </style>
 
 </resources>

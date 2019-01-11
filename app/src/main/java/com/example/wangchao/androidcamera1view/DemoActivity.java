@@ -36,8 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class DemoActivity extends AppCompatActivity  implements
-        ActivityCompat.OnRequestPermissionsResultCallback
-        {
+        ActivityCompat.OnRequestPermissionsResultCallback{
 
     private static final String TAG = "MainActivity";
 

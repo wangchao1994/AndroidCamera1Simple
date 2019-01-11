@@ -27,7 +27,6 @@ public abstract class CameraModeBase {
     }
     //CameraView---------------------------------end----------------------------------------------------
 
-
     //CameraId---------------------------------start----------------------------------------------------
     /**
      * CameraId switch
@@ -113,7 +112,6 @@ public abstract class CameraModeBase {
     public interface CameraPictureOrVideoResultCallBack{
         void callResultBack(Observable<String> result);
     }
-
     //Camera录像数据-----------------------------------------
 
     public CameraVideoRecordCallBack mCameraVideoResultCallBack;
