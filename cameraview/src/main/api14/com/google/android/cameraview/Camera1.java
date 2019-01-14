@@ -38,6 +38,8 @@ public class Camera1 extends CameraViewImpl{
     private float mZoomValues = Constants.ZOOM_VALUE;
     private int maxZoom;
     private VideoManager mVideoManager;
+    private byte[][] mPreviewCallbackBuffers = new byte[CACHE_BUFFER_NUM][];
+    private final static int CACHE_BUFFER_NUM = 3;
 
     public Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -308,6 +310,15 @@ public class Camera1 extends CameraViewImpl{
         setZoomInternal(mZoomValues);
         mCamera.setParameters(mCameraParameters);
         mCamera.setPreviewCallback(mPreviewCallBack);
+        Log.d("onPreviewFrame","onPreviewFrame----mWidth="+mPreview.mWidth+"   mHeight=="+mPreview.mHeight);
+        /*int bufferSize = mPreview.mHeight * mPreview.mWidth * 3 / 2;
+        for (int i = 0; i < mPreviewCallbackBuffers.length; i++) {
+            if (mPreviewCallbackBuffers[i] == null) {
+                mPreviewCallbackBuffers[i] = new byte[bufferSize];
+            }
+            mCamera.addCallbackBuffer(mPreviewCallbackBuffers[i]);
+        }
+        mCamera.setPreviewCallbackWithBuffer(mPreviewCallbackWithBuffer);*/
         if (mShowingPreview) {
             mCamera.startPreview();
         }
@@ -319,11 +330,25 @@ public class Camera1 extends CameraViewImpl{
     Camera.PreviewCallback mPreviewCallBack = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            Log.d("onPreviewFrame","onPreviewFrame----------------------->"+data.length);
-            mCallback.onPreviewFrame(data);
+            Log.d("[onPreviewFrame]","onPreviewFrame--------mPreviewCallBack--------------->"+data.length);
+            if (mCallback != null){
+                mCallback.onPreviewFrame(data);
+            }
         }
     };
 
+   /* Camera.PreviewCallback mPreviewCallbackWithBuffer = new Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            //mCallback.onPreviewFrame(data);
+            if (data == null) {
+                Log.e(TAG, "[onPreviewFrame], data is null");
+                return;
+            }
+            Log.d("[onPreviewFrame]","onPreviewFrame-------mPreviewCallbackWithBuffer-------------->"+data);
+            mCamera.addCallbackBuffer(data);
+        }
+    };*/
 
     @SuppressWarnings("SuspiciousNameCombination")
     private Size chooseOptimalSize(SortedSet<Size> sizes) {
@@ -355,8 +380,8 @@ public class Camera1 extends CameraViewImpl{
     private void releaseCamera() {
         if (mCamera != null) {
             Log.d("wang_log","releaseCamera------------------------------------->");
-            mCamera.setPreviewCallback(null);
-            //mCamera.setPreviewCallbackWithBuffer(null);
+            //mCamera.setPreviewCallback(null);
+            mCamera.setPreviewCallbackWithBuffer(null);
             mCamera.release();
             mCamera = null;
             mCallback.onCameraClosed();
