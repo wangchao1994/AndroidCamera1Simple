@@ -108,10 +108,11 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
-                        time += 1000;
+                        //time += 1000;
                         String time_show = TimingUtils.getDate(time);
                         Log.d(TAG,"startRecord---------="+time_show);
                         mCameraView.setTimeShow(time_show);
+                        time += 1000;//避免UI显示和实际录制视频时间不一致
                     }
                 });
         compositeSubscription.add(cycleTimeSubscription);
