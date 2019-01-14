@@ -380,8 +380,8 @@ public class Camera1 extends CameraViewImpl{
     private void releaseCamera() {
         if (mCamera != null) {
             Log.d("wang_log","releaseCamera------------------------------------->");
-            //mCamera.setPreviewCallback(null);
-            mCamera.setPreviewCallbackWithBuffer(null);
+            mCamera.setPreviewCallback(null);
+            //mCamera.setPreviewCallbackWithBuffer(null);
             mCamera.release();
             mCamera = null;
             mCallback.onCameraClosed();
