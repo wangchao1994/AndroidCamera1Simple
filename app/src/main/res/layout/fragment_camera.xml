@@ -56,7 +56,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/iv_add_zoom"
             android:visibility="visible"
-            android:src="@drawable/ic_zoom"/>
+            android:src="@drawable/focus"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
