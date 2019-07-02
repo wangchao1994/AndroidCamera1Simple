@@ -13,7 +13,6 @@ import com.example.wangchao.androidcamera1view.camera.CameraManager;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraContract;
 import com.example.wangchao.androidcamera1view.camera.controller.CameraModeBase;
 import com.example.wangchao.androidcamera1view.utils.glide.GlideLoader;
-import com.example.wangchao.androidcamera1view.utils.permission.PermissionsManager;
 import com.example.wangchao.androidcamera1view.utils.time.TimingUtils;
 import com.example.wangchao.androidcamera1view.utils.toast.ToastUtils;
 import com.google.android.cameraview.AspectRatio;
@@ -230,35 +229,6 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
     public void focusOnTouch(MotionEvent event) {
         if (mCameraManager != null){
             mCameraManager.setFocusOnTouchEvent(event);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PermissionsManager.CAMERA_REQUEST_CODE:
-                //权限请求失败
-                if (grantResults.length == PermissionsManager.CAMERA_REQUEST.length) {
-                    for (int result : grantResults) {
-                        if (result != PackageManager.PERMISSION_GRANTED) {
-                            ToastUtils.showToast(BaseApplication.getInstance(), "拍照权限被拒绝");
-                            break;
-                        }
-                    }
-                }
-                break;
-            case PermissionsManager.VIDEO_REQUEST_CODE:
-                if (grantResults.length == PermissionsManager.VIDEO_PERMISSIONS.length) {
-                    for (int result : grantResults) {
-                        if (result != PackageManager.PERMISSION_GRANTED) {
-                            ToastUtils.showToast(BaseApplication.getInstance(), "录像权限被拒绝");
-                            break;
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
         }
     }
 

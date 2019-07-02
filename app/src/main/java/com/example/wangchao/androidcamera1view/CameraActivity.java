@@ -98,11 +98,6 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mCameraPresenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-    @Override
     public GlobalHandler getGlobalHandler() {
         if (mGlobalHandler != null){
             return mGlobalHandler;

@@ -7,17 +7,18 @@ import android.view.View;
 import android.view.Window;
 
 import com.example.wangchao.androidcamera1view.camera.event.GlobalHandler;
+import com.example.wangchao.androidcamera1view.utils.permission.PermissionActivity;
 import com.example.wangchao.androidcamera1view.utils.sp.PreferencesUtils;
 
 
-public abstract class BaseActivity extends AppCompatActivity implements GlobalHandler.HandleMsgListener{
+public abstract class BaseActivity extends PermissionActivity implements GlobalHandler.HandleMsgListener{
 
     protected GlobalHandler mGlobalHandler;
     protected PreferencesUtils mPreferencesUtils;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreateTasks(Bundle savedInstanceState) {
+        super.onCreateTasks(savedInstanceState);
         setContentView(getLayoutId());
         setSystemUIChange();
         mGlobalHandler = GlobalHandler.getInstance();
@@ -38,8 +39,8 @@ public abstract class BaseActivity extends AppCompatActivity implements GlobalHa
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onDestroyTasks() {
+        super.onDestroyTasks();
     }
 
     /**

@@ -10,7 +10,6 @@ import com.google.android.cameraview.AspectRatio;
 public interface CameraContract {
 
     interface Presenter {
-        void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
         void onResume();
         void onPause();
         void takePictureOrVideo();

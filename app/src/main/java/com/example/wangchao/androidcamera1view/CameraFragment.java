@@ -76,8 +76,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
 
     public static CameraFragment newInstance(ICameraImpl iCamera) {
         mICameraImpl = iCamera;
-        CameraFragment fragment = new CameraFragment();
-        return fragment;
+        return new CameraFragment();
     }
 
     @Override
@@ -294,7 +293,7 @@ public class CameraFragment extends Fragment implements CameraContract.CameraVie
                 break;
             case R.id.iv_last_thumb:
                 Log.d("camera_log","last FilePath--------------->mFilePath="+mFilePath);
-                if (mFilePath != null){
+                if (mFilePath != null && !"".equals(mFilePath)){
                     CameraUtils.OnIntentGallery(BaseApplication.getInstance(),mFilePath);
                 }
                 break;

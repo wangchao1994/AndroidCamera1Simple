@@ -29,8 +29,7 @@ public class PhotoMode extends CameraModeBase {
     public int getCameraFacingId() {
         CameraView cameraView = getCameraView();
         if (cameraView != null){
-            int facing = cameraView.getFacing();
-            return facing;
+            return cameraView.getFacing();
         }
         return 0;
     }
