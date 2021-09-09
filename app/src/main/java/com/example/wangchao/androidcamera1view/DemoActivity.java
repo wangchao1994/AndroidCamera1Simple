@@ -43,7 +43,6 @@ public class DemoActivity extends AppCompatActivity  implements
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
     private static final String FRAGMENT_DIALOG = "dialog";
-
     private static final int[] FLASH_OPTIONS = {
             CameraUtils.FLASH_AUTO,
             CameraUtils.FLASH_OFF,
