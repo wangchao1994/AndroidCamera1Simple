@@ -22,6 +22,7 @@ public class CameraActivity extends BaseActivity implements ICameraImpl {
     private CameraPresenter mCameraPresenter;
     private CameraManager mCameraManager;
     private WorkThreadManager mWorkThreadManager;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_camera;
