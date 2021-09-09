@@ -45,6 +45,7 @@ public class CameraPresenter implements CameraContract.Presenter,CameraModeBase.
         mCameraManager.setCameraVideoCallBack(this);
         currentCameraMode = CameraManager.MODE_CAMERA;
     }
+
     @Override
     public void onResume() {
         if (mCameraManager != null){

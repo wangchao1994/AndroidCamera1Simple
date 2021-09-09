@@ -23,6 +23,8 @@ import com.example.cameraview.utils.CameraUtils;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CallbackBridge;
 import com.google.android.cameraview.Camera1;
+import com.google.android.cameraview.Camera2;
+import com.google.android.cameraview.Camera2Api23;
 import com.google.android.cameraview.CameraViewImpl;
 import com.google.android.cameraview.Constants;
 import com.google.android.cameraview.PreviewImpl;
@@ -58,15 +60,14 @@ public class CameraView extends FrameLayout {
         preview = createPreviewImpl(context);
         mCallbacks = new CallbackBridge(this);
         //camera1/camera2自适应 change
-        /*if (Build.VERSION.SDK_INT < 21) {
+        if (Build.VERSION.SDK_INT < 21) {
             mImpl = new Camera1(mCallbacks, preview);
         } else if (Build.VERSION.SDK_INT < 23) {
             mImpl = new Camera2(mCallbacks, preview, context);
         } else {
             Log.d("sdk_int","other------------------------------------");
             mImpl = new Camera2Api23(mCallbacks, preview, context);
-        }*/
-        mImpl = new Camera1(mCallbacks, preview);
+        }
         initUIEventLsn(context);
         // Attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CameraView, defStyleAttr,R.style.Widget_CameraView);
